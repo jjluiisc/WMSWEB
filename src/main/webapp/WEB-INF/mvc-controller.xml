@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<commands>
+    <command id="IniciaSesion" name="Inicia Sesion">
+        <class-name>mx.reder.wms.command.IniciaSesionCommand</class-name>
+        <session-less>true</session-less>
+        <content-type>application/json</content-type>
+    </command>
+
+    <command id="BusquedaProductos" name="Busqueda de Productos">
+        <class-name>mx.reder.wms.command.BusquedaProductosCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="VerLog" name="Busqueda de Productos">
+        <class-name>mx.reder.wms.command.VerLogCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+
+    <command id="AppTerminaInventario" name="Termina el Inventario">
+        <class-name>mx.reder.wms.command.app.TerminaInventarioCommand</class-name>
+        <session-less>true</session-less>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="AppTerminaAnalisisInventario" name="Termina el Analisis de Inventario">
+        <class-name>mx.reder.wms.command.app.TerminaAnalisisInventarioCommand</class-name>
+        <session-less>true</session-less>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="AppValidaTerminalInventario" name="Valida la Terminal del Inventario">
+        <class-name>mx.reder.wms.command.app.ValidaTerminalInventarioCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="AppAnalizaProductosInventario" name="Analiza los Productos del Inventario">
+        <class-name>mx.reder.wms.command.app.AnalizaProductosInventarioCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="AppListaAnalisisInventario" name="Lista el Analisis de Inventario">
+        <class-name>mx.reder.wms.command.app.ListaAnalisisInventarioCommand</class-name>
+        <session-less>true</session-less>
+        <content-type>application/json</content-type>
+    </command>
+
+
+    <command id="GeneraOrdenesSurtidoPedidos" name="Genera Ordenes de Surtido de Pedidos">
+        <class-name>mx.reder.wms.command.GeneraOrdenesSurtidoPedidosCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="CancelaPendienteOrdenSurtidoPedido" name="Cancela Pendiente Orden Surtido Pedido">
+        <class-name>mx.reder.wms.command.CancelaPendienteOrdenSurtidoPedidoCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="CancelaSurtidoOrdenSurtidoPedido" name="Cancela Surtido Orden Surtido Pedido">
+        <class-name>mx.reder.wms.command.CancelaSurtidoOrdenSurtidoPedidoCommand</class-name>
+        <session-less>true</session-less>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="CancelaTerminoOrdenSurtidoPedido" name="Cancela Termino Orden Surtido Pedido">
+        <class-name>mx.reder.wms.command.CancelaTerminoOrdenSurtidoPedidoCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="ValidaUsuario" name="Valida Usuario">
+        <class-name>mx.reder.wms.command.ValidaUsuarioCommand</class-name>
+        <session-less>true</session-less>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="ListaOrdenesSurtidoPedido" name="Lista las Ordenes de Surtido de Pedido">
+        <class-name>mx.reder.wms.command.ListaOrdenesSurtidoPedidoCommand</class-name>
+        <session-less>true</session-less>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="DetallesOrdenSurtidoPedido" name="Detalles de la Orden de Surtido de Pedido">
+        <class-name>mx.reder.wms.command.DetallesOrdenSurtidoPedidoCommand</class-name>
+        <session-less>true</session-less>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="TerminaOrdenSurtidoPedido" name="Termina la Orden de Surtido de Pedido">
+        <class-name>mx.reder.wms.command.TerminaOrdenSurtidoPedidoCommand</class-name>
+        <session-less>true</session-less>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="DetallesCertificacionSurtido" name="Detalles Certificacion Surtido">
+        <class-name>mx.reder.wms.command.DetallesCertificacionSurtidoCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="ConfirmaCertificacionSurtido" name="Confirma Certificacion Surtido">
+        <class-name>mx.reder.wms.command.ConfirmaCertificacionSurtidoCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="CancelaCertificacionSurtido" name="Cancela Certificacion Surtido">
+        <class-name>mx.reder.wms.command.CancelaCertificacionSurtidoCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="FacturaRuta" name="Factura una Ruta">
+        <class-name>mx.reder.wms.command.FacturaRutaCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+
+    <!-- -->
+    <command id="ASPELColeccion" name="Obtiene una Coleccion">
+        <class-name>mx.reder.wms.command.ASPELColeccionCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="Registro" name="Obtiene el registro">
+        <class-name>com.atcloud.web.command.RegistroCommand</class-name>
+        <session-less>true</session-less>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="Catalogos" name="Obtiene los registros de Catalogos">
+        <class-name>com.atcloud.web.command.CatalogosCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="MaestroDetalle" name="Obtiene los registros de Maestro Detalle">
+        <class-name>com.atcloud.web.command.MaestroDetalleCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="Lista" name="Obtiene una Lista de Registros">
+        <class-name>com.atcloud.web.command.ListaCommand</class-name>
+        <session-less>true</session-less>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="Coleccion" name="Obtiene una Coleccion">
+        <class-name>com.atcloud.web.command.ColeccionCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="Accion" name="Ejecuta una Accion">
+        <class-name>com.atcloud.web.command.AccionCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+</commands>

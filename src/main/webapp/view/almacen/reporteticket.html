@@ -1,0 +1,51 @@
+<div class="container">
+    <div id="titulo">
+        <h2>Reporte de Tickets</h2>
+        <p class="lead">Datos para el Reporte de Tickets</p>
+    </div>
+    <div class="row">
+        <div class="col-md-12 order-md-1">
+            <form id="parametros">
+                <h4 class="mb-3">Par&aacute;metros</h4>
+                <input type="hidden" name="compania">
+                <div class="space-medio"></div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label>Contenedor</label>
+                        <input type="text" class="form-control" name="contenedor">
+                    </div>
+                </div>
+                <div class="space"></div>
+                <div class="space"></div>
+            </form>
+        </div>
+    </div>
+    <div class="space"></div>
+    <div class="row">
+        <div class="col-md-12" id="datos">
+        </div>
+    </div>
+    <div class="space"></div>
+    <div class="row">
+        <div class="col-md-12 order-md-1">
+            <div class="form-group row pull-right">
+                <div class="col-sm-12">
+                    <button class="btn btn-outline-primary" id="btn-datos"
+                        onclick="verDatos(); return false;">
+                        <span class="fa fa-eye"></span> Ver Datos
+                    </button>
+                    <button class="btn btn-outline-primary" id="btn-reporte"
+                        onclick="generarReporte(); return false;">
+                        <span class="fa fa-print"></span> Ticket
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="space"></div>
+    <div class="space"></div>
+    <div id="notificacion">
+        Listo.
+    </div>
+    <div class="space"></div>
+</div>

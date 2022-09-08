@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="VentasTicket" language="groovy" pageWidth="202" pageHeight="578" columnWidth="200" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="706"/>
+	<style name="title" isDefault="false" lineSpacing="Single" fontName="SansSerif" fontSize="12" isBold="true"/>
+	<style name="header" isDefault="false" lineSpacing="Single" fontName="SansSerif" fontSize="9" isBold="true"/>
+	<style name="detail" isDefault="false" lineSpacing="Single" fontName="SansSerif" fontSize="8" isBold="true"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="leyendacontenedor" class="java.lang.String"/>
+	<parameter name="tipoFactura" class="java.lang.String"/>
+	<parameter name="nombreVendedor" class="java.lang.String"/>
+	<parameter name="claveVendedor" class="java.lang.String"/>
+	<parameter name="totalLetras" class="java.lang.String"/>
+	<parameter name="fechaCredito" class="java.lang.String"/>
+	<parameter name="fechaTicket" class="java.lang.String"/>
+	<parameter name="fechaTicket1" class="java.lang.String"/>
+	<parameter name="credito" class="java.lang.String"/>
+	<parameter name="referencia" class="java.lang.String"/>
+	<field name="rfccompania" class="java.lang.String"/>
+	<field name="nombrecompania" class="java.lang.String"/>
+	<field name="razonsocialcompania" class="java.lang.String"/>
+	<field name="telefonocompania" class="java.lang.String"/>
+	<field name="codigopostaldireccion" class="java.lang.String"/>
+	<field name="calledireccion" class="java.lang.String"/>
+	<field name="nointeriordireccion" class="java.lang.String"/>
+	<field name="noexteriordireccion" class="java.lang.String"/>
+	<field name="nombrepoblaciondireccion" class="java.lang.String"/>
+	<field name="nombrecoloniadireccion" class="java.lang.String"/>
+	<field name="nombreentidadfederativadireccion" class="java.lang.String"/>
+	<field name="nombrepaisdireccion" class="java.lang.String"/>
+	<field name="codigopostaldireccionenvio" class="java.lang.String"/>
+	<field name="calledireccionenvio" class="java.lang.String"/>
+	<field name="nointeriordireccionenvio" class="java.lang.String"/>
+	<field name="noexteriordireccionenvio" class="java.lang.String"/>
+	<field name="nombrepoblaciondireccionenvio" class="java.lang.String"/>
+	<field name="nombrecoloniadireccionenvio" class="java.lang.String"/>
+	<field name="nombreentidadfederativadireccionenvio" class="java.lang.String"/>
+	<field name="nombrepaisdireccionenvio" class="java.lang.String"/>
+	<field name="CLAVEcliente" class="java.lang.String"/>
+	<field name="NOMBREcliente" class="java.lang.String"/>
+	<field name="RFCcliente" class="java.lang.String"/>
+	<field name="usuariousuario" class="java.lang.String"/>
+	<field name="nombreusuario" class="java.lang.String"/>
+	<field name="flsurtido" class="java.lang.Integer"/>
+	<field name="CVE_PEDIpedido" class="java.lang.String"/>
+	<field name="pedidoordensurtidopedido" class="java.lang.String"/>
+	<field name="fechasurtidoordensurtidopedido" class="java.util.Date"/>
+	<field name="statusordensurtidopedido" class="java.lang.String"/>
+	<field name="rutaordensurtidopedido" class="java.lang.String"/>
+	<field name="codigo" class="java.lang.String"/>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="contenedor" class="java.lang.String"/>
+	<field name="lote" class="java.lang.String"/>
+	<field name="fecaducidad" class="java.util.Date"/>
+	<field name="certificadas" class="java.lang.Double"/>
+	<field name="preciopublico" class="java.lang.Double"/>
+	<field name="precio" class="java.lang.Double"/>
+	<field name="total" class="java.lang.Double"/>
+	<field name="iva" class="java.lang.Double"/>
+	<variable name="contenedorCOUNTcodigo" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{codigo}]]></variableExpression>
+	</variable>
+	<variable name="contenedorSUMcertificadas" class="java.lang.Double" resetType="Group" resetGroup="contenedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{certificadas}]]></variableExpression>
+	</variable>
+	<variable name="contenedorSUMtotal" class="java.lang.Double" resetType="Group" resetGroup="contenedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{total}]]></variableExpression>
+	</variable>
+	<variable name="sumaCantidadProducto" class="java.lang.Double" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{certificadas}]]></variableExpression>
+	</variable>
+	<variable name="sumaImporteProducto" class="java.lang.Double" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{total}]]></variableExpression>
+	</variable>
+	<variable name="productosV" class="java.lang.Integer" incrementType="Group" incrementGroup="producto" calculation="Count">
+		<variableExpression><![CDATA[$V{producto_COUNT}]]></variableExpression>
+	</variable>
+	<group name="contenedor" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{flsurtido}]]></groupExpression>
+		<groupHeader>
+			<band height="197">
+				<staticText>
+					<reportElement style="header" positionType="Float" x="0" y="2" width="48" height="12"/>
+					<textElement textAlignment="Right" lineSpacing="Single"/>
+					<text><![CDATA[Clave:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="header" positionType="Float" x="50" y="2" width="150" height="12"/>
+					<textElement textAlignment="Left" lineSpacing="Single">
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{CLAVEcliente}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="header" positionType="Float" x="0" y="14" width="48" height="12"/>
+					<textElement textAlignment="Right" lineSpacing="Single"/>
+					<text><![CDATA[Cliente:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="header" positionType="Float" x="50" y="14" width="150" height="30"/>
+					<textElement textAlignment="Left" lineSpacing="Single">
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{NOMBREcliente}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="header" positionType="Float" x="0" y="87" width="48" height="12"/>
+					<textElement textAlignment="Right" lineSpacing="Single"/>
+					<text><![CDATA[D.SAE:]]></text>
+				</staticText>
+				<textField>
+					<reportElement style="header" positionType="Float" x="50" y="87" width="150" height="12"/>
+					<textElement textAlignment="Left" lineSpacing="Single"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{pedidoordensurtidopedido}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="header" positionType="Float" x="0" y="99" width="58" height="12"/>
+					<textElement textAlignment="Right" lineSpacing="Single"/>
+					<text><![CDATA[Referencia:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="header" positionType="Float" x="0" y="111" width="48" height="12"/>
+					<textElement textAlignment="Right" lineSpacing="Single"/>
+					<text><![CDATA[Fecha:]]></text>
+				</staticText>
+				<textField pattern="yyyy-MM-dd HH:mm:ss">
+					<reportElement style="header" positionType="Float" x="50" y="111" width="120" height="12"/>
+					<textElement textAlignment="Left" lineSpacing="Single"/>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{fechasurtidoordensurtidopedido}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="header" positionType="Float" x="0" y="123" width="48" height="12"/>
+					<textElement textAlignment="Right" lineSpacing="Single"/>
+					<text><![CDATA[Pedido:]]></text>
+				</staticText>
+				<textField>
+					<reportElement style="header" positionType="Float" x="50" y="123" width="120" height="12"/>
+					<textElement textAlignment="Left" lineSpacing="Single"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{pedidoordensurtidopedido}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="header" positionType="Float" x="5" y="135" width="150" height="12"/>
+					<textElement textAlignment="Left" lineSpacing="Single"/>
+					<text><![CDATA[Direccion de Envio:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="header" positionType="Float" x="1" y="147" width="199" height="48"/>
+					<textElement textAlignment="Center" lineSpacing="Single" markup="html"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{calledireccionenvio}+" "+$F{noexteriordireccionenvio}+" "+$F{nointeriordireccionenvio}
+                                            +"<br>"+$F{nombrecoloniadireccionenvio}+" "+$F{nombrepoblaciondireccionenvio}+", "+$F{nombreentidadfederativadireccionenvio}
+                                            +"<br>"+"C.P. "+$F{codigopostaldireccionenvio}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="header" positionType="Float" x="0" y="44" width="48" height="12"/>
+					<textElement textAlignment="Right" lineSpacing="Single"/>
+					<text><![CDATA[Clave:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="header" positionType="Float" x="50" y="44" width="150" height="12"/>
+					<textElement textAlignment="Left" lineSpacing="Single">
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{claveVendedor}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="header" positionType="Float" x="50" y="56" width="150" height="30"/>
+					<textElement textAlignment="Left" lineSpacing="Single">
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{nombreVendedor}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="header" positionType="Float" x="0" y="56" width="48" height="12"/>
+					<textElement textAlignment="Right" lineSpacing="Single"/>
+					<text><![CDATA[Vendedor:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="58" y="99" width="141" height="12"/>
+					<textElement>
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{referencia}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="434">
+				<line>
+					<reportElement x="0" y="1" width="200" height="1"/>
+				</line>
+				<staticText>
+					<reportElement style="header" x="0" y="16" width="50" height="12"/>
+					<textElement textAlignment="Center" lineSpacing="Single"/>
+					<text><![CDATA[Productos:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="detail" x="50" y="16" width="50" height="12"/>
+					<textElement textAlignment="Center" lineSpacing="Single"/>
+					<text><![CDATA[Certificadas:]]></text>
+				</staticText>
+				<textField pattern="#,##0">
+					<reportElement style="header" x="50" y="28" width="50" height="12"/>
+					<textElement textAlignment="Center" lineSpacing="Single"/>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$V{contenedorSUMcertificadas}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="header" x="0" y="42" width="200" height="12"/>
+					<textElement textAlignment="Center" lineSpacing="Single"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{leyendacontenedor}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="header" x="0" y="55" width="202" height="12"/>
+					<textElement textAlignment="Center" lineSpacing="Single"/>
+					<text><![CDATA[*********************************************]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="detail" x="0" y="67" width="202" height="12"/>
+					<textElement textAlignment="Center" lineSpacing="Single">
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[* NO SE ACEPTAN DEVOLUCIONES]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="detail" x="0" y="103" width="202" height="12"/>
+					<textElement textAlignment="Center" lineSpacing="Single">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[* ESTE TICKET NO ES UN COMPROBANTE FISCAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="detail" x="143" y="16" width="50" height="12"/>
+					<textElement textAlignment="Right" lineSpacing="Single"/>
+					<text><![CDATA[Importe:]]></text>
+				</staticText>
+				<textField pattern="$ #,##0.00">
+					<reportElement style="header" x="128" y="28" width="69" height="12"/>
+					<textElement textAlignment="Right" lineSpacing="Single"/>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$V{contenedorSUMtotal}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="detail" x="42" y="78" width="129" height="12"/>
+					<textElement lineSpacing="Single">
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[DESPUES DE 7 DIAS DE ENTREGADA ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="detail" x="42" y="89" width="129" height="12"/>
+					<textElement lineSpacing="Single">
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[LA MERCANCIA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="detail" x="0" y="116" width="202" height="12"/>
+					<textElement textAlignment="Center" lineSpacing="Single">
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[PAGARE]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="header" positionType="Float" x="1" y="294" width="199" height="42"/>
+					<textElement textAlignment="Center" lineSpacing="Single" markup="html">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{calledireccionenvio}+" "+$F{noexteriordireccionenvio}+" "+$F{nointeriordireccionenvio}
+                                            +"<br>"+$F{nombrecoloniadireccionenvio}+" "+$F{nombrepoblaciondireccionenvio}+", "+$F{nombreentidadfederativadireccionenvio}
+                                            +"<br>"+"C.P. "+$F{codigopostaldireccionenvio}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="header" positionType="Float" x="1" y="132" width="199" height="108"/>
+					<textElement textAlignment="Justified" lineSpacing="Single">
+						<font fontName="SansSerif" size="7" isBold="false" isItalic="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Pagare bueno por " + $V{contenedorSUMtotal} + " " +
+"En la Ciudad de México a " + $P{fechaTicket} + " " +
+"Debemos y pagaremos incondicionalmente por este " +
+"pagare a la orden de REDER, S. DE R.L. DE C.V., la cantidad " +
+"de " + $V{contenedorSUMtotal} + ", cantidad con " +
+"letra:("+ $P{totalLetras} + ") en la Ciudad de " +
+"México, "+ $P{fechaTicket1} +". El suscriptor pagará a la "+
+"vista intereses ordinarios mensuales a partir del día " +
+$P{fechaCredito} + " a razón del 5% en " +
+"caso de que el suscriptor no pague en la fecha de " +
+"vencimiento la totalidad del saldo, ni cualquier pago de " +
+"intereses ordinarios se pagaran intereses moratorios a " +
+"razón del 5% mensual."]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="14" y="274" width="175" height="1"/>
+				</line>
+				<line>
+					<reportElement x="14" y="348" width="175" height="1"/>
+				</line>
+				<line>
+					<reportElement x="14" y="402" width="175" height="1"/>
+				</line>
+				<staticText>
+					<reportElement style="detail" x="0" y="349" width="202" height="12"/>
+					<textElement textAlignment="Center" lineSpacing="Single">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Firma de persona que suscribe]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="detail" x="0" y="403" width="202" height="12"/>
+					<textElement textAlignment="Center" lineSpacing="Single">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Nombre completo, domicilio y firma ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="detail" x="0" y="360" width="202" height="12"/>
+					<textElement textAlignment="Center" lineSpacing="Single">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[El pagare]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="detail" x="0" y="414" width="202" height="12"/>
+					<textElement textAlignment="Center" lineSpacing="Single">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Del Aval]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="header" positionType="Float" x="1" y="275" width="199" height="19"/>
+					<textElement textAlignment="Center" lineSpacing="Single">
+						<font fontName="SansSerif" size="8" isBold="false" isItalic="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{NOMBREcliente}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="3" width="202" height="12"/>
+					<textElement textAlignment="Center">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{credito}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="1" y="28" width="49" height="12"/>
+					<textElement>
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{productosV}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="contenido">
+		<groupExpression><![CDATA[$F{contenedor}]]></groupExpression>
+		<groupHeader>
+			<band height="29">
+				<textField>
+					<reportElement style="detail" x="55" y="2" width="144" height="12"/>
+					<textElement textAlignment="Left" lineSpacing="Single">
+						<font fontName="SansSerif" size="8" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{contenedor}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="detail" positionType="Float" x="1" y="2" width="53" height="12"/>
+					<textElement lineSpacing="Single"/>
+					<text><![CDATA[Contenedor:]]></text>
+				</staticText>
+				<line>
+					<reportElement positionType="Float" x="0" y="16" width="200" height="1"/>
+				</line>
+				<line>
+					<reportElement positionType="Float" x="0" y="27" width="200" height="1"/>
+				</line>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="producto">
+		<groupExpression><![CDATA[$F{codigo}]]></groupExpression>
+		<groupHeader>
+			<band height="4">
+				<printWhenExpression><![CDATA[false]]></printWhenExpression>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="4">
+				<printWhenExpression><![CDATA[false]]></printWhenExpression>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="100" splitType="Stretch">
+			<image>
+				<reportElement x="1" y="5" width="49" height="36"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{logo}.toString()]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="title" x="53" y="5" width="147" height="24"/>
+				<textElement textAlignment="Center" lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{razonsocialcompania}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="header" x="53" y="40" width="25" height="12"/>
+				<textElement textAlignment="Left" lineSpacing="Single"/>
+				<text><![CDATA[RFC:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="detail" x="81" y="40" width="116" height="12"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{rfccompania}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="header" x="1" y="52" width="199" height="48"/>
+				<textElement textAlignment="Center" lineSpacing="Single" markup="html"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{calledireccion}+" "+$F{noexteriordireccion}+" "+$F{nointeriordireccion}
+                                    +"<br>"+$F{nombrecoloniadireccion}+" "+$F{nombrepoblaciondireccion}+", "+$F{nombreentidadfederativadireccion}
+                                    +"<br>"+"C.P. "+$F{codigopostaldireccion}+" Tel.: "+$F{telefonocompania}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="44" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="40" width="200" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="header" x="0" y="5" width="200" height="14"/>
+				<textElement textAlignment="Center" lineSpacing="Single"/>
+				<text><![CDATA[Ticket de Certificacion]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="header" x="0" y="20" width="170" height="18"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="SansSerif" size="14" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Ruta: "+$F{rutaordensurtidopedido}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="header" positionType="Float" x="171" y="20" width="28" height="18"/>
+				<textElement textAlignment="Left" lineSpacing="Single">
+					<font fontName="SansSerif" size="14" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{tipoFactura}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="4" splitType="Stretch">
+			<printWhenExpression><![CDATA[false]]></printWhenExpression>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="10" splitType="Stretch"/>
+	</summary>
+</jasperReport>

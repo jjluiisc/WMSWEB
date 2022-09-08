@@ -1,0 +1,182 @@
+<div class="container">
+    <div id="titulo">
+        <h2>Certificaci&oacute;n de Surtido</h2>
+        <p class="lead">Datos de la Certificaci&oacute;n de Surtido</p>
+    </div>
+    <div class="row">
+        <div class="col-md-12 order-md-1">
+            <form id="ordensurtido-datos">
+                <h4 class="mb-3">Orden Surtido</h4>
+                <div class="row">
+                    <div class="col-sm-2">
+                        <label>Compa&ntilde;ia</label>
+                        <div class="input-group invalid">
+                            <input type="text" class="form-control" style="text-align: right;" name="compania">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filtroCampo(this, 'compania');" id="btn-compania">
+                                    <span class="fa fa-filter" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>O.S.</label>
+                        <div class="input-group invalid">
+                            <input type="text" class="form-control" name="flsurtido">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filtroCampo(this, 'flsurtido');" id="btn-orden-surtido">
+                                    <span class="fa fa-filter" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Estatus</label>
+                        <div class="input-group invalid">
+                            <select class="form-control" name="status">
+                                <option value="TS">Terminado de Surtir</option>
+                                <option value="CE">Certificando</option>
+                            </select>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filtroCampo(this, 'status');">
+                                    <span class="fa fa-filter" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Pedido</label>
+                        <div class="input-group invalid">
+                            <input type="text" class="form-control" name="pedido">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filtroCampo(this, 'pedido');">
+                                    <span class="fa fa-filter" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Fecha Pedido</label>
+                        <div class="input-group invalid">
+                            <input type="date" class="form-control" name="fechapedido">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filtroCampo(this, 'fechapedido');">
+                                    <span class="fa fa-filter" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-medium"></div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label>Cliente</label>
+                        <div class="input-group invalid">
+                            <input type="text" class="form-control" name="cliente">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filtroCampo(this, 'cliente');">
+                                    <span class="fa fa-filter" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Vendedor</label>
+                        <div class="input-group invalid">
+                            <input type="text" class="form-control" name="vendedor">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filtroCampo(this, 'vendedor');">
+                                    <span class="fa fa-filter" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Ruta</label>
+                        <div class="input-group invalid">
+                            <input type="text" class="form-control" name="ruta">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filtroCampo(this, 'ruta');">
+                                    <span class="fa fa-filter" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Total</label>
+                        <input type="text" class="form-control" style="text-align: right;" name="total" readonly>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="space"></div>
+    <div class="row">
+        <div class="col-md-12 order-md-1">
+            <h4 class="mb-3">Ordenes de Surtido</h4>
+            <div class="row">
+                <div class="col-sm-12" id="ordenessurtido">
+                </div>
+            </div>
+            <div class="space-medium"></div>
+            <div class="row">
+                <div class="col-sm-6">
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group row pull-right">
+                        <div class="col-sm-12">
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-outline-primary" id="btn-cancela"
+                                    onclick="cancelaCertificaSurtido(); return false;">
+                                    <span class="fa fa-ban"></span> Cancelar
+                                </button>
+                                <button class="btn btn-outline-primary" id="btn-detalles"
+                                    onclick="detallesOrdenSurtido(); return false;">
+                                    <span class="fa fa-asterisk"></span> Detalles
+                                </button>
+                                <button class="btn btn-outline-primary" id="btn-certifica-surtido"
+                                    onclick="certificaSurtido(); return false;">
+                                    <span class="fa fa-send"></span> Certifica Surtido
+                                </button>
+                                <button class="btn btn-outline-primary" id="btn-refresh-ordenes-surtido"
+                                    onclick="actualizaOrdenesSurtido(); return false;">
+                                    <span class="fa fa-refresh"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="invisible" id="div-detalles">
+        <div class="space"></div>
+        <hr>
+        <h3 class="mb-3">Detalles</h3>
+        <div class="row">
+            <div class="col-sm-12" id="detalles">
+            </div>
+        </div>
+        <div class="space-medium"></div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group row pull-right">
+                    <div class="col-sm-12">
+                        <!-- div class="btn-group" role="group">
+                            <button class="btn btn-outline-primary" id="btn-consulta-existencia"
+                                onclick="consultaExistencia(); return false;">
+                                <span class="fa fa-cubes"></span> Consulta Existencia
+                            </button>
+                        </div -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="space"></div>
+    <div class="space"></div>
+    <div id="notificacion">
+        Listo.
+    </div>
+    <div class="space"></div>
+</div>

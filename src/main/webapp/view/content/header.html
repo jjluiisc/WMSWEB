@@ -1,0 +1,51 @@
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light" id="navTop">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerHeader"
+            aria-controls="navbarTogglerHeader" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="/wms">
+        <img alt="logo" src="/wms/img/logo-sm.png">
+    </a>
+    <div class="collapse navbar-collapse" id="navbarTogglerHeader">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Principal</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Almac&eacute;n</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" onclick="asignaSurtido();">Asigna Surtido</a>
+                    <a class="dropdown-item" onclick="ordenesSurtido();">Ordenes de Surtido</a>
+                    <a class="dropdown-item" onclick="reporteOrdenesSurtido();">Reporte Ordenes de Surtido</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" onclick="certificacionSurtido();">Certificaci&oacute;n de Surtido</a>
+                    <a class="dropdown-item" onclick="facturarRuta();">Facturar Ruta</a>
+                    <a class="dropdown-item" onclick="reporteCertificacion();">Reporte Certificaci&oacute;n de Surtido</a>
+                    <a class="dropdown-item" onclick="reporteTicket();">Descarga Ticket</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" onclick="capturaInventario();">Captura - Inventario</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Catalogos</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" onclick="catalogoCompania();">Compa&ntilde;ia</a>
+                    <a class="dropdown-item" onclick="catalogoSurtidores();">Surtidores</a>
+                    <a class="dropdown-item" onclick="catalogoClavesAlternas();">Codigos QR</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" onclick="catalogoUsuarios();">Usuarios</a>
+                    <a class="dropdown-item" onclick="catalogoPerfiles();">Perfiles</a>
+                    <a class="dropdown-item" onclick="catalogoPermisos();">Permisos</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" onclick="verLog();">Log</a>
+                </div>
+            </li>
+        </ul>
+        <div class="navbar-right">
+            <span class="text-sm-left"><%=usuario.nombre%>@<%=usuario.razonsocial%></span>&nbsp;
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="cerrarSesion();">
+                <span class="fa fa-user" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Cerrar Sesi&oacute;n
+            </button>
+        </div>
+    </div>
+</nav>
