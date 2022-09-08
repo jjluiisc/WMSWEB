@@ -1,0 +1,75 @@
+
+<div class="container">
+    <div id="titulo">
+        <h2>CSD</h2>
+        <p class="lead">Datos para agregar el Certificado de Sello Digital.</p>
+    </div>
+    <div class="row">
+        <div class="col-md-12 order-md-1">
+            <form id="form-csd" class="needs-validation" novalidate action="/wms/UploadCertificado">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Compa&ntilde;ia</label>
+                        <div class="input-group invalid">
+                            <div class="input-group-prepend">
+                                <input type="text" class="form-control" style="width: 100px;" name="compania" placeholder="" value="" readonly required>
+                            </div>
+                            <input type="text" class="form-control" name="razonsocial" placeholder="" value="" readonly>
+                            <div class="invalid-feedback">
+                                La <strong>compa&ntilde;ia</strong> no puede estar vac&iacute;a.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Certificado</label>
+                        <input type="text" class="form-control" name="nocertificado" placeholder="" value="" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Contrase&ntilde;a</label>
+                        <input type="text" class="form-control" name="password" placeholder="" value="" required>
+                        <div class="invalid-feedback">
+                            La <strong>contrase&ntilde;a</strong> es requerida.
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Fecha Inicial</label>
+                        <input type="text" class="form-control" name="fechainicial" placeholder="" value="" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Fecha Final</label>
+                        <input type="text" class="form-control" name="fechafinal" placeholder="" value="" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Archivo .KEY</label>
+                        <input type="file" class="form-control" name="archivokey" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Archivo .CER</label>
+                        <input type="file" class="form-control" name="archivocer" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Archivo .P12</label>
+                        <input type="file" class="form-control" name="archivop12">
+                    </div>
+                </div>
+                <hr>
+                <div class="space"></div>
+                <div class="space"></div>
+                <div id="csd-notificacion">
+                    Listo.
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

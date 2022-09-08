@@ -1,0 +1,43 @@
+
+<div class="container">
+    <div id="titulo">
+        <p class="lead">Seleccione los c&oacute;digos que quiere cargar al inventario.</p>
+    </div>
+    <div class="row" id="inventario">
+        <div class="col-md-12 order-md-1">
+            <form id="form-seleccion-productos" class="needs-validation" novalidate>
+                <h4 class="mb-3">Grupos de Productos</h4>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Almacen</label>
+                        <select class="form-control" name="almacen" required>                            
+                        </select>
+                    </div>
+                </div>
+                <div class="space"></div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Laboratorio</label>
+                        <select class="form-control" name="laboratorio" required>                            
+                        </select>
+                    </div>
+                </div>
+                <div class="space"></div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Claves</label>
+                        <div class="input-group invalid">
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="buscarProductos();">
+                                    <span class="fa fa-search" aria-hidden="true"></span>&nbsp;Buscar
+                                </button>
+                            </div>
+                            <input type="text" class="form-control" name="lista-productos" placeholder="" value="">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

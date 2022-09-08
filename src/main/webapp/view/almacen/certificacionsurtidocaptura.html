@@ -1,0 +1,268 @@
+<div class="container">
+    <div id="titulo">
+        <h2>Captura de Certificaci&oacute;n Surtido</h2>
+        <p class="lead">Datos para la Captura de Certificaci&oacute;n de Pedidos</p>
+    </div>
+    <div class="row">
+        <div class="col-md-12 order-md-1">
+            <form id="ordensurtido-datos">
+                <h4 class="mb-3">Orden Surtido</h4>
+                <div class="row">
+                    <div class="col-sm-2">
+                        <label>Compa&ntilde;ia</label>
+                        <input type="text" class="form-control" style="text-align: right;" name="compania" readonly>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Folio:</label>
+                        <input type="text" class="form-control" style="text-align: right;" name="flsurtido" readonly>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Estatus</label>
+                        <select class="form-control" name="status" disabled>
+                            <option value="TS">Terminado de Surtir</option>
+                            <option value="CE">Certificando</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Pedido</label>
+                        <input type="text" class="form-control" name="pedido" readonly>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Fecha Pedido</label>
+                        <input type="date" class="form-control" name="fechapedido" readonly>
+                    </div>
+                </div>
+                <div class="space-medium"></div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label>Cliente</label>
+                        <input type="text" class="form-control" name="cliente" readonly>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Vendedor</label>
+                        <input type="text" class="form-control" name="vendedor" readonly>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Ruta</label>
+                        <input type="text" class="form-control" name="ruta" readonly>
+                    </div>
+                </div>
+                <div class="space-medium"></div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label>Cantidad</label>
+                        <input type="text" class="form-control" style="text-align: right;" name="cantidad" readonly>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Surtidas</label>
+                        <input type="text" class="form-control" style="text-align: right;" name="surtidas" readonly>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Total</label>
+                        <input type="text" class="form-control" style="text-align: right;" name="total" readonly>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="space"></div>
+    <div class="row">
+        <div class="col-sm-12" id="detalles">
+        </div>
+    </div>
+    <div class="space-medium"></div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group row pull-left">
+                    <div class="col-sm-12">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group row pull-right">
+                    <div class="col-sm-12">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-outline-primary" id="btn-confirmar"
+                                onclick="gurdaCambioLote(); return false;">
+                                <span class="fa fa-save"></span> Guardar Cambio
+                            </button>
+                            <button class="btn btn-outline-primary" id="btn-confirmar"
+                                onclick="seleccionaRegistro(); return false;">
+                                <span></span> Selecciona
+                            </button>
+                            <button class="btn btn-primary" id = "buttonCambiaLote" type="button" data-toggle="collapse" data-target="#collapseLote" aria-expanded="false" aria-controls="collapseLote">
+                                Cambia Lote
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="collapse" id="collapseLote">        
+        <h4 class="mb-3">Cambio Lote de Certificaci&oacute;n Surtido</h4>
+        <form id="cambioLotesurtidodetalle" class="needs-validation" novalidate>
+            <input type="hidden" name="compania">
+            <input type="hidden" name="flsurtido">
+            <input type="hidden" name="partida">
+            <input type="hidden" name="idlote">
+            <div class="row">
+                <div class="col-md-1">
+                    <label class="text-right">Codigo:</label>
+                    <div class="invalid-feedback">
+                        El <strong>c&oacute;digo</strong> no puede estar vac&iacute;o.
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="codigo" required readonly>
+                </div>
+                <div class="col-md-2">
+                    <label class="text-right">Descripci&oacute;n:</label>
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" name="descripcion" required readonly>
+                </div>
+            </div>
+            <div class="space-medium"></div>
+            <div class="row">
+                <div class="col-md-1">
+                    <label class="text-right">Lote:</label>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control text-uppercase" name="lote" required>
+                    <div class="invalid-feedback">
+                        El <strong>lote</strong> no puede estar vac&iacute;o.
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <label class="text-right">Caducidad:</label>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control" name="fecaducidad" required readonly>
+                    <div class="invalid-feedback">
+                        La <strong>fecha de caducidad</strong> no puede estar vac&iacute;a.
+                    </div>
+                </div>
+            </div>
+        </form>        
+    </div>
+    <div class="space"></div>
+    <div class="space"></div>
+    <div class="space"></div>
+    <div class="row">
+        <div class="col-md-12 order-md-1">
+            <h4 class="mb-3">Captura de Certificaci&oacute;n Surtido</h4>
+            <div class="row">
+                <div class="col-md-12 order-md-1">
+                    <form id="certificacionsurtidodetalle" class="needs-validation" novalidate>
+                        <input type="hidden" name="compania">
+                        <input type="hidden" name="flsurtido">
+                        <input type="hidden" name="partida">
+                        <input type="hidden" name="idlote">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label class="text-right">Contenedor:</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" name="contenedor" required>
+                                <div class="invalid-feedback">
+                                    El <strong>contenedor</strong> no puede estar vac&iacute;o.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-medium"></div>
+                        <div class="row">
+                            <div class="col-md-1">
+                                <label class="text-right">Codigo:</label>
+                                <div class="invalid-feedback">
+                                    El <strong>c&oacute;digo</strong> no puede estar vac&iacute;o.
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="codigo" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="text-right">Descripci&oacute;n:</label>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="descripcion" required readonly>
+                            </div>
+                        </div>
+                        <div class="space-medium"></div>
+                        <div class="row">
+                            <div class="col-md-1">
+                                <label class="text-right">Lote:</label>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control text-uppercase" name="lote" required readonly>
+                                <div class="invalid-feedback">
+                                    El <strong>lote</strong> no puede estar vac&iacute;o.
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <label class="text-right">Caducidad:</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="date" class="form-control" name="fecaducidad" required readonly>
+                                <div class="invalid-feedback">
+                                    La <strong>fecha de caducidad</strong> no puede estar vac&iacute;a.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-medium"></div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label class="text-right">Certificadas:</label>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control text-right" name="certificadas" required pattern="^\d+(?:\.\d{1,2})?$">
+                                <div class="invalid-feedback">
+                                    La cantidad <strong>certificada</strong> no puede estar vac&iacute;a, n&uacute;mero con hasta dos decimales.
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="space-medium"></div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group row pull-left">
+                        <div class="col-sm-12">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group row pull-right">
+                        <div class="col-sm-12">
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-outline-primary" id="btn-cancela"
+                                    onclick="borrarCertificacion(); return false;">
+                                    <span class="fa fa-eraser"></span> Borrar
+                                </button>
+                                <button class="btn btn-outline-primary" id="btn-cancela"
+                                    onclick="cancelarCertificacion(); return false;">
+                                    <span class="fa fa-ban"></span> Cancelar
+                                </button>
+                                <button class="btn btn-outline-primary" id="btn-confirmar"
+                                    onclick="confirmarCertificacion(); return false;">
+                                    <span class="fa fa-check-circle"></span> Confirmar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="space"></div>
+            <div class="row">
+                <div class="col-sm-12" id="detalles-certificada">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="space"></div>
+    <div class="space"></div>
+    <div id="notificacion">
+        Listo.
+    </div>
+    <div class="space"></div>
+</div>

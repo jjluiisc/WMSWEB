@@ -1,0 +1,134 @@
+
+<div class="container">
+    <div id="titulo">
+        <h2>Captura Inventarios</h2>
+        <p class="lead">Datos para la captura de inventarios.</p>
+    </div>
+    <div class="row" id="inventario">
+        <div class="col-md-12 order-md-1">
+            <form id="form-inventario" class="needs-validation" novalidate>
+                <h4 class="mb-3">Captura Inventario</h4>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="flcapturainventario">Folio</label>
+                        <input type="text" class="form-control" name="flcapturainventario" placeholder="" value="">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="fecreacion">Creaci&oacute;n</label>
+                        <input type="text" class="form-control" name="fecreacion" placeholder="" value="">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="status">Estado</label>
+                        <input type="text" class="form-control" name="status" placeholder="" value="">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="femodificacion">Modificacion</label>
+                        <input type="text" class="form-control" name="femodificacion" placeholder="" value="">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="flinventario">Inventario</label>
+                        <input type="text" class="form-control" name="flinventario" placeholder="" value="">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="fase">Fase</label>
+                        <input type="text" class="form-control" name="fase" placeholder="" value="">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row" id="inventario-comandos">
+        <div class="col-md-12">
+            <div class="row pull-right" style="vertical-align: bottom;">
+                <div class="col-sm-12">
+                    <div>
+                        <button class="btn btn-outline-primary" id="btn-crear" onclick="crearCaptura(); return false;">
+                            <span class="fa fa-plus-square"></span> Crear
+                        </button>
+                        <button class="btn btn-outline-primary" id="btn-eliminar" onclick="borrarCaptura(); return false;">
+                            <span class="fa fa-trash"></span> Borrar
+                        </button>
+                        <button class="btn btn-outline-primary" id="btn-imprimir" onclick="imprimirCaptura(); return false;">
+                            <span class="fa fa-print"></span> Imprimir
+                        </button>
+                        <button class="btn btn-outline-primary" id="btn-terminar" onclick="terminarCaptura(); return false;">
+                            <span class="fa fa-check-circle"></span> Terminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="space"></div>
+    <div class="row" id="productos">
+        <div class="col-md-12 order-md-1">
+            <form id="form-productos" class="needs-validation" novalidate>
+                <h4 class="mb-3">Productos</h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="ubicacion">Ubicaci&oacute;n</label>
+                        <input type="text" class="form-control" name="ubicacion" placeholder="" value="">
+                    </div>
+                </div>
+                <div class="space-medium"></div>
+                <div class="row">
+                    <div class="col-md-1">
+                        <label>C&oacute;digo:</label>
+                    </div>
+                    <div class="col-md-11">
+                        <input type="text" class="form-control" name="codigo" placeholder="" value="" required>
+                        <div class="invalid-feedback">
+                            El <strong>c&oacute;digo</strong> no puede estar vac&iacute;o.
+                        </div>
+                    </div>
+                </div>
+                <div class="space-medium"></div>
+                <div class="row">
+                    <div class="col-md-9">
+                        <textarea class="form-control f_size_medium" style="height: 60px;" name="descripcion" readonly required></textarea>
+                    </div>
+                    <div class="col-md-1">
+                        <label>Cantidad:</label>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control t_align_r" name="cantidad" placeholder="" value="" required pattern="^\d+(?:\.\d{1,4})?$">
+                        <div class="invalid-feedback">
+                            La <strong>cantidad</strong> es requerida, n&uacute;mero con hasta cuatro decimales.
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="space"></div>
+    <div class="row" id="detalles">
+        <div class="col-sm-12">
+            <h4 class="mb-3">Detalles</h4>
+            <div id="grid-detalles">
+            </div>
+        </div>
+    </div>
+    <div class="row" id="detalles-comandos">
+        <div class="col-md-12">
+            <div class="row pull-right" style="vertical-align: bottom;">
+                <div class="col-sm-12">
+                    <div class="btn-group">
+                        <button class="btn btn-outline-primary" id="btn-agregar-detalle" onclick="agregarDetalle(); return false;">
+                            <span class="fa fa-plus-square"></span> Agregar
+                        </button>
+                        <button class="btn btn-outline-primary" id="btn-eliminar-detalle" onclick="eliminarDetalle(); return false;">
+                            <span class="fa fa-trash"></span> Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="space"></div>
+    <div id="notificacion">
+        Listo.
+    </div>
+</div>
+

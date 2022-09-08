@@ -1,0 +1,143 @@
+
+<div class="container">
+    <div id="titulo">
+        <h2>Direcciones</h2>
+        <p class="lead">Datos para el registro de Direcciones.</p>
+    </div>
+    <div class="row">
+        <div class="col-md-12 order-md-1">
+            <form id="datos" class="needs-validation" novalidate>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Direcci&oacute;n</label>
+                        <div class="input-group invalid">
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-buscar">
+                                    <span class="fa fa-search" aria-hidden="true"></span>&nbsp;Buscar
+                                </button>
+                            </div>
+                            <input type="text" class="form-control text-uppercase" name="direccion"  placeholder="" value="" required>
+                            <div class="invalid-feedback">
+                                La <strong>direcci&oacute;n</strong> no puede estar vac&iacute;a.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <label>Calle</label>
+                        <input type="text" class="form-control text-uppercase" name="calle" placeholder="" value="" required>
+                        <div class="invalid-feedback">
+                            La <strong>calle</strong> es requerida.
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label>No. Ext.</label>
+                        <input type="text" class="form-control text-uppercase" name="noexterior" placeholder="" value="">
+                    </div>
+                    <div class="col-md-2">
+                        <label>No. Int.</label>
+                        <input type="text" class="form-control text-uppercase" name="nointerior" placeholder="" value="">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Codigo Postal</label>
+                        <div class="input-group invalid">
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-codigopostal">
+                                    <span class="fa fa-search" aria-hidden="true"></span>&nbsp;Buscar
+                                </button>
+                            </div>
+                            <input type="text" class="form-control" name="codigopostal"  placeholder="" value="" required>
+                            <div class="invalid-feedback">
+                                El <strong>c&oacute;digo postal</strong> no puede estar vac&iacute;o.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Colonia</label>
+                        <div class="input-group invalid">
+                            <div class="input-group-prepend">
+                                <input type="text" class="form-control key-input" name="colonia" placeholder="" value="" readonly required>
+                            </div>
+                            <input type="text" class="form-control text-uppercase" name="dscolonia" placeholder="" value="" readonly>
+                            <div class="invalid-feedback">
+                                La <strong>colonia</strong> es requerida.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Poblaci&oacute;n</label>
+                        <div class="input-group invalid">
+                            <div class="input-group-prepend">
+                                <input type="text" class="form-control key-input" name="poblacion" placeholder="" value="" readonly required>
+                            </div>
+                            <input type="text" class="form-control text-uppercase" name="dspoblacion" placeholder="" value="" readonly>
+                            <div class="invalid-feedback">
+                                La <strong>poblaci&oacute;n</strong> es requerida.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Entidad Federativa</label>
+                        <div class="input-group invalid">
+                            <div class="input-group-prepend">
+                                <input type="text" class="form-control key-input" name="entidadfederativa" placeholder="" value="" readonly required>
+                            </div>
+                            <input type="text" class="form-control text-uppercase" name="dsentidadfederativa" placeholder="" value="" readonly>
+                            <div class="invalid-feedback">
+                                La <strong>entidad federativa</strong> es requerida.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Pa&iacute;s</label>
+                        <div class="input-group invalid">
+                            <div class="input-group-prepend">
+                                <input type="text" class="form-control key-input" name="pais" placeholder="" value="" readonly required>
+                            </div>
+                            <input type="text" class="form-control text-uppercase" name="dspais" placeholder="" value="" readonly>
+                            <div class="invalid-feedback">
+                                El <strong>pa&iacute;s</strong> es requerida.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="space"></div>
+                <div class="row" id="comandos">
+                    <div class="col-md-12">
+                        <div class="row pull-right">
+                            <div class="col-sm-12">
+                                <div>
+                                    <button type="button" class="btn btn-outline-primary" id="btn-regresar" onclick="window.history.back();">
+                                        <span class="fa fa-step-backward" aria-hidden="true"></span>&nbsp;Regresar
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" id="btn-limpiar">
+                                        <span class="fa fa-eraser" aria-hidden="true"></span>&nbsp;Limpiar
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" id="btn-guardar">
+                                        <span class="fa fa-save" aria-hidden="true"></span>&nbsp;Guardar
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" id="btn-borrar">
+                                        <span class="fa fa-remove" aria-hidden="true"></span>&nbsp;Borrar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space"></div>
+                <div id="notificacion">
+                    Listo.
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
