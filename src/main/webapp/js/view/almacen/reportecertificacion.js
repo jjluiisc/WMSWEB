@@ -185,7 +185,7 @@ function imprimeTicket() {
         var params = "compania="+usuario.compania
                 +"&flsurtido="+s_flsurtido
         download("/wms/Reporteador?reporte=OrdenSurtidoPedidoCertificaTicket&"+params);
-        download("/wms/Reporteador?reporte=OrdenSurtidoPedidoCertificaDetalleTicket&"+params);
+        //download("/wms/Reporteador?reporte=OrdenSurtidoPedidoCertificaDetalleTicket&"+params);
         
         window.history.back();
     };

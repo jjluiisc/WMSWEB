@@ -777,7 +777,7 @@ function confirmarCertificacionConfirmado(rowdata) {
                         +"&flsurtido="+response.ordensurtido.flsurtido
                         +"&contenedor="+response.contenedores[indx].contenedor;
                 download("/wms/Reporteador?reporte=OrdenSurtidoPedidoCertificaTicket&"+params);
-                download("/wms/Reporteador?reporte=OrdenSurtidoPedidoCertificaDetalleTicket&"+params);
+                //download("/wms/Reporteador?reporte=OrdenSurtidoPedidoCertificaDetalleTicket&"+params);
             }
             window.history.back();
         };

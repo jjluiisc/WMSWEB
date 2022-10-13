@@ -7,6 +7,7 @@ import com.atcloud.util.Numero;
 import com.atcloud.web.WebCommandInterface;
 import com.atcloud.web.WebException;
 import java.io.PrintWriter;
+import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import mx.reder.wms.business.DetallesCertificacionSurtidoBusiness;
@@ -61,6 +62,13 @@ public class TerminaOrdenSurtidoPedidoCommand implements WebCommandInterface {
                     DetallesCertificacionSurtidoBusiness certifica = new DetallesCertificacionSurtidoBusiness();
                     certifica.setDatabaseServices(ds);
                     certifica.detallesCertificacion(compania, usuario, flsurtido);
+                    
+                    if(ordenSurtidoPedidoDAO.getMsg().equals("Este pedido pasa a [ruta]")){
+                        ordenSurtidoPedidoDAO.status = Constantes.ESTADO_CONFIRMADO;
+                        ordenSurtidoPedidoDAO.fechastatus = new Date();
+                        ordenSurtidoPedidoDAO.fechatermino = new Date();
+                        ds.update(ordenSurtidoPedidoDAO, new String[] {"status", "fechastatus", "fechatermino"});
+                    }
                 }
 
                 ds.commit();
