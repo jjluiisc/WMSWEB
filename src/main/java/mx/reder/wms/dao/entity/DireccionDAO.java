@@ -4,10 +4,11 @@ import com.atcloud.dao.engine.DatabaseRecord;
 import com.atcloud.dao.engine.DatabaseRecordABC;
 import com.atcloud.dao.engine.DatabaseServices;
 import com.atcloud.util.ServletUtilities;
+import mx.reder.wms.cfdi.entity.DireccionCFD;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-public class DireccionDAO implements DatabaseRecord, DatabaseRecordABC, java.io.Serializable {
+public class DireccionDAO implements DatabaseRecord, DatabaseRecordABC, DireccionCFD, java.io.Serializable {
     public String direccion = "";
     public String calle = "";
     public String noexterior = "";
@@ -112,5 +113,45 @@ public class DireccionDAO implements DatabaseRecord, DatabaseRecordABC, java.io.
         if (existe) {
             ds.delete(this);
         }
+    }
+
+    @Override
+    public String getCalle() {
+        return calle;
+    }
+
+    @Override
+    public String getNoExterior() {
+        return noexterior;
+    }
+
+    @Override
+    public String getNoInterior() {
+        return nointerior;
+    }
+
+    @Override
+    public String getColonia() {
+        return colonia;
+    }
+
+    @Override
+    public String getMunicipio() {
+        return poblacion;
+    }
+
+    @Override
+    public String getEstado() {
+        return entidadfederativa;
+    }
+
+    @Override
+    public String getPais() {
+        return pais;
+    }
+
+    @Override
+    public String getCodigoPostal() {
+        return codigopostal;
     }
 }

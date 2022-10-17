@@ -2,6 +2,6 @@
 <Context antiJARLocking="true" path="/wms">
     <Resource name="jdbc/reder" auth="Container" type="javax.sql.DataSource"
         maxTotal="100" maxIdle="30" maxWaitMillis="10000"
-        username="sa" password="123456" driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-        url="jdbc:sqlserver://localhost:1433;databaseName=wms;"/>    
+        username="syda" password="sY%_3srew" driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+        url="jdbc:sqlserver://reder.duckdns.org:1433;databaseName=wms;"/>    
 </Context>

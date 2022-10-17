@@ -5,6 +5,7 @@ import java.util.Date;
 import mx.reder.wms.cfdi.entity.ConceptoCFD;
 import mx.reder.wms.cfdi.entity.InformacionAduaneraCFD;
 import mx.gob.sat.sitioInternet.cfd.catalogos.CClaveUnidad;
+import mx.gob.sat.sitioInternet.cfd.catalogos.CObjetoImp;
 
 /**
  *
@@ -63,6 +64,9 @@ public class ASPELFacturaDetalleTO implements ConceptoCFD {
     public String CVE_UNIDAD = null;
     public String DESCR = null;
     public String UNI_MED = null;
+    public Double PREPUB = null;
+
+    private InformacionAduaneraCFD informacionAduanera;
 
     @Override
     public double getCantidad() {
@@ -71,7 +75,7 @@ public class ASPELFacturaDetalleTO implements ConceptoCFD {
 
     @Override
     public String getUnidad() {
-        return CVE_UNIDAD;
+        return UNI_MED;
     }
 
     @Override
@@ -81,9 +85,9 @@ public class ASPELFacturaDetalleTO implements ConceptoCFD {
 
     @Override
     public CClaveUnidad.Enum getClaveUnidad() {
-        if (UNI_MED==null)
+        if (CVE_UNIDAD==null)
             return CClaveUnidad.PZ;
-        CClaveUnidad.Enum claveunidad = CClaveUnidad.Enum.forString(UNI_MED.toUpperCase());
+        CClaveUnidad.Enum claveunidad = CClaveUnidad.Enum.forString(CVE_UNIDAD.toUpperCase());
         return claveunidad!=null ? claveunidad: CClaveUnidad.PZ;
     }
 
@@ -138,6 +142,14 @@ public class ASPELFacturaDetalleTO implements ConceptoCFD {
     }
 
     @Override
+    public CObjetoImp.Enum getObjetoImp() {
+        if (IMPU4==0.0)
+            return CObjetoImp.X_01;
+        // Cualquier valor distinto de cero, se asume que el objeto de impuesto es X_02
+        return CObjetoImp.X_02;
+    }
+
+    @Override
     public double getPrIva() {
         return Numero.redondea2(IMPU4 / 100.0);
     }
@@ -154,6 +166,10 @@ public class ASPELFacturaDetalleTO implements ConceptoCFD {
 
     @Override
     public InformacionAduaneraCFD getInformacionAduanera() {
-        return null;
+        return informacionAduanera;
+    }
+
+    public void setInformacionAduanera(InformacionAduaneraCFD informacionAduanera) {
+        this.informacionAduanera = informacionAduanera;
     }
 }

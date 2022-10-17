@@ -30,24 +30,24 @@ public class UploadCertificado extends HttpServlet {
 
     public Connection getConnection() throws Exception {
         InitialContext ic = new InitialContext();
-        DataSource ds = (DataSource)ic.lookup("java:comp/env/jdbc/reder");
+        DataSource ds = (DataSource)ic.lookup("java:comp/env/jdbc/cfdi");
         return ds.getConnection();
     }
 
     public void processRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType("application/json");
         response.setHeader("Cache-Control", "no-cache");
-        
+
         Connection connection = getConnection();
         DatabaseServices ds = new DatabaseServices(connection);
-            
+
         try {
-            log.debug("UploadCertificado processRequest() ...");
-            
+            log.debug("UploadCertificadoServlet processRequest() ...");
+
             CertificadoSelloDigitalDAO daoResponse = new CertificadoSelloDigitalDAO();
-            
+
             ds.beginTransaction();
-            
+
             boolean isMultipart = ServletFileUpload.isMultipartContent(request);
             if (!isMultipart) {
             } else {
@@ -70,7 +70,7 @@ public class UploadCertificado extends HttpServlet {
                         String value = item.getString();
 
                         log.debug("parameter ["+name+"] = "+value);
-                        
+
                         if(name.equals("compania"))
                             daoResponse.compania = value;
                         else if(name.equals("password"))
@@ -99,62 +99,62 @@ public class UploadCertificado extends HttpServlet {
                     }
                 }
             }
-            
+
             EncriptacionFacade.getInstance().validar(daoResponse);
 
             if (ds.update(daoResponse)==0)
                 ds.insert(daoResponse);
-            
+
             PrintWriter out = response.getWriter();
             JSON.writeObject(out, daoResponse);
             out.close();
-            
+
             ds.commit();
-            
+
         } catch(WebException e) {
             log.error(e.getMessage(), e);
 
             ErrorTO errorTO = new ErrorTO();
             errorTO.fromException(e);
-            
+
             try {
                 ds.rollback();
             } catch(SQLException SQLe) {
             }
-            
-            try {                
+
+            try {
                 PrintWriter out = response.getWriter();
                 JSON.writeObject(out, errorTO);
                 out.close();
-                
+
             } catch(Exception ex) {
                 throw new WebException(ex.getMessage());
             }
-            
+
         } catch(Exception e) {
             log.error(e.getMessage(), e);
-            
+
             try {
                 ds.rollback();
             } catch(SQLException SQLe) {
             }
-            
+
             ErrorTO errorTO = new ErrorTO();
             errorTO.fromException(e);
-            
-            try {                
+
+            try {
                 PrintWriter out = response.getWriter();
                 JSON.writeObject(out, errorTO);
                 out.close();
-                
+
             } catch(Exception ex) {
                 throw new WebException(ex.getMessage());
             }
         }
-        
+
         connection.close();
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
@@ -162,9 +162,9 @@ public class UploadCertificado extends HttpServlet {
         } catch(Exception e) {
             e.printStackTrace();
             throw new ServletException(e.getMessage());
-        }        
+        }
     }
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
@@ -172,6 +172,6 @@ public class UploadCertificado extends HttpServlet {
         } catch(Exception e) {
             e.printStackTrace();
             throw new ServletException(e.getMessage());
-        }        
+        }
     }
 }
