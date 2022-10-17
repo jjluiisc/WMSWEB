@@ -6,7 +6,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>WMSWEB - REDER</name>
-    
+
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -14,8 +14,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <jakartaee>8.0</jakartaee>
+        <atcloud.lib.dir>/Users/joelbecerramiranda/Apps/ImaginaSoftware/AtCloudLibrary/target</atcloud.lib.dir>
+        <cfdi.lib.dir>/Users/joelbecerramiranda/Apps/ImaginaSoftware/CFDIJAR/target</cfdi.lib.dir>
+        <lib.dir>/opt/apache-tomcat-9.0.65/lib</lib.dir>
     </properties>
-    
+
     <dependencies>
         <dependency>
             <groupId>javax</groupId>
@@ -29,7 +32,7 @@
             <version>0.0.1</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\AtCloudLibrary.jar
+                ${atcloud.lib.dir}/AtCloudLibrary-1.0-SNAPSHOT.jar
             </systemPath>
         </dependency>
         <dependency>
@@ -38,7 +41,7 @@
             <version>1.2.15</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\log4j-1.2.15.jar
+                ${lib.dir}/log4j-1.2.15.jar
             </systemPath>
         </dependency>
         <dependency>
@@ -47,7 +50,7 @@
             <version>1.1.1</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\jdom-1.1.1.jar
+                ${lib.dir}/jdom-1.1.1.jar
             </systemPath>
         </dependency>
         <dependency>
@@ -56,7 +59,7 @@
             <version>1.1.1</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\json-simple-1.1.1.jar
+                ${lib.dir}/json-simple-1.1.1.jar
             </systemPath>
         </dependency>
         <dependency>
@@ -65,16 +68,16 @@
             <version>1.2.2</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\commons-fileupload-1.2.2.jar
+                ${lib.dir}/commons-fileupload-1.2.2.jar
             </systemPath>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>DBCP</groupId>
             <artifactId>dbcp</artifactId>
             <version>1.2.2</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\commons-dbcp-1.2.2.jar
+                ${lib.dir}/commons-dbcp-1.2.2.jar
             </systemPath>
         </dependency>
         <dependency>
@@ -83,7 +86,7 @@
             <version>3.9</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\poi-3.9.jar
+                ${lib.dir}/poi-3.9.jar
             </systemPath>
         </dependency>
         <dependency>
@@ -92,7 +95,7 @@
             <version>3.9</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\poi-ooxml-3.9.jar
+                ${lib.dir}/poi-ooxml-3.9.jar
             </systemPath>
         </dependency>
         <dependency>
@@ -101,7 +104,7 @@
             <version>3.9</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\poi-ooxml-schemas-3.9.jar
+                ${lib.dir}/poi-ooxml-schemas-3.9.jar
             </systemPath>
         </dependency>
         <dependency>
@@ -110,7 +113,16 @@
             <version>3.5.3</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\jasperreports-3.5.3.jar
+                ${lib.dir}/jasperreports-3.5.3.jar
+            </systemPath>
+        </dependency>
+        <dependency>
+            <groupId>iText</groupId>
+            <artifactId>iText</artifactId>
+            <version>2.1.0</version>
+            <scope>system</scope>
+            <systemPath>
+                ${lib.dir}/iText-2.1.0.jar
             </systemPath>
         </dependency>
         <dependency>
@@ -119,7 +131,7 @@
             <version>2.5.0</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\xbean-2.5.0.jar
+                ${lib.dir}/xbean-2.5.0.jar
             </systemPath>
         </dependency>
         <dependency>
@@ -128,16 +140,25 @@
             <version>1.7</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\zxing-core-1.7.jar
+                ${lib.dir}/zxing-core-1.7.jar
+            </systemPath>
+        </dependency>
+        <dependency>
+            <groupId>SSL</groupId>
+            <artifactId>ssl</artifactId>
+            <version>1</version>
+            <scope>system</scope>
+            <systemPath>
+                ${lib.dir}/commons-ssl.jar
             </systemPath>
         </dependency>
         <dependency>
             <groupId>BouncyCastle</groupId>
-            <artifactId>bcprov-jdk14-133</artifactId>
-            <version>1.7</version>
+            <artifactId>bc</artifactId>
+            <version>15on-157</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\bcprov-jdk14-133.jar
+                ${lib.dir}/bcprov-jdk15on-157.jar
             </systemPath>
         </dependency>
         <dependency>
@@ -146,29 +167,56 @@
             <version>2</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\sat-schemas-3.3.jar
+                ${lib.dir}/sat-schemas-4.0.jar
             </systemPath>
         </dependency>
         <dependency>
             <groupId>TimbreFiscal</groupId>
             <artifactId>timbre-fiscal-schemas</artifactId>
-            <version>3.3</version>
-            <scope>system</scope>
-            <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\complemento-timbre-fiscal-schemas-3.3.jar
-            </systemPath>
-        </dependency>
-        <dependency>
-            <groupId>SW</groupId>
-            <artifactId>sw</artifactId>
             <version>1.1</version>
             <scope>system</scope>
             <systemPath>
-                C:\Users\Luis\Desktop\proyectos\Quezada\lib\SW-JAVA-0.0.3.4-jar-with-dependencies.jar
+                ${lib.dir}/complemento-timbre-fiscal-1.1.jar
             </systemPath>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <groupId>CartaPorte</groupId>
+            <artifactId>carta-porte-schemas</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>
+                ${lib.dir}/cartaporte-2.0_cfdi-4.0.jar
+            </systemPath>
+        </dependency>
+        <dependency>
+            <groupId>ComplementoPagos</groupId>
+            <artifactId>complemento-pagos</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>
+                ${lib.dir}/complemento-pagos-2.0_cfdi-4.0.jar
+            </systemPath>
+        </dependency>
+        <dependency>
+            <groupId>HTTPCore</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>5.5</version>
+            <scope>system</scope>
+            <systemPath>
+                ${lib.dir}/httpcore5-5.0.1.jar
+            </systemPath>
+        </dependency>
+        <dependency>
+            <groupId>HTTPClient</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>5.5</version>
+            <scope>system</scope>
+            <systemPath>
+                ${lib.dir}/httpclient5-5.0.1.jar
+            </systemPath>
+        </dependency>
     </dependencies>
-    
+
      <build>
         <plugins>
             <plugin>
@@ -186,7 +234,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
+                <version>3.1.0</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
