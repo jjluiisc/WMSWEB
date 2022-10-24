@@ -7,4 +7,6 @@ public interface InformacionAduaneraCFD {
     public String getNumero();
     public Calendar getFecha();
     public String getAduana();
+    public String getLote();
+    public Calendar getFechaCaducidad();
 }

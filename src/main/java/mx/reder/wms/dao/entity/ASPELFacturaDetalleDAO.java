@@ -53,6 +53,10 @@ public class ASPELFacturaDetalleDAO implements DatabaseRecord, DatabaseRecordASP
     public String DESCR_ART = null;
     public String UUID = null;
     public Date VERSION_SINC = null;
+    public String ID_RELACION= null;
+    public Double PREC_NETO = null;
+    public String CVE_PRODSERV = null;
+    public String CVE_UNIDAD = null;
 
     public ASPELFacturaDetalleDAO() {
     }

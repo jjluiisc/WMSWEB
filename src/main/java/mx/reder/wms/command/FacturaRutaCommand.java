@@ -28,7 +28,7 @@ public class FacturaRutaCommand implements WebCommandInterface {
             String usuario = request.getParameter("usuario");
             String ruta = request.getParameter("ruta");
             String flsurtido = request.getParameter("flsurtido");
-            
+
             DatabaseDataSource databaseDataSourceAspel = new DatabaseDataSource("REDER");
             Connection connectionAspel = databaseDataSourceAspel.getConnection();
             DatabaseServices dsAspel = new DatabaseServices(connectionAspel);
@@ -38,23 +38,31 @@ public class FacturaRutaCommand implements WebCommandInterface {
             //
             FacturaRutaResponse responseFacturaRuta;
 
-            //
-            // No hay manejo transaccional aqui, la transaccion se controla en el business
-            //
-            FacturaRutaBusiness factura = new FacturaRutaBusiness();
-            factura.setDatabaseServices(ds);
-            factura.setDatabaseAspelServices(dsAspel);
-            responseFacturaRuta = factura.facturaRuta(compania, usuario, ruta, flsurtido);
-            
-            connectionAspel.close();
-            databaseDataSourceAspel.close();
-            
+            try {
+                //
+                // No hay manejo transaccional aqui, la transaccion se controla en el business
+                //
+                FacturaRutaBusiness factura = new FacturaRutaBusiness();
+                factura.setDatabaseServices(ds);
+                factura.setDatabaseAspelServices(dsAspel);
+                responseFacturaRuta = factura.facturaRuta(compania, usuario, ruta, flsurtido);
+            } catch(Exception e) {
+                log.error(e.getMessage(), e);
+
+                throw e;
+            } finally {
+                connectionAspel.close();
+                databaseDataSourceAspel.close();
+            }
+
             try (PrintWriter out = response.getWriter()) {
                 out.write("{");
-                out.write("\"ordenessurtido\": ");
-                JSON.writeArrayOfObjects(out, responseFacturaRuta.ordenessurtido);
-                out.write(", \"resultados\": ");
-                JSON.writeArrayOfObjects(out, responseFacturaRuta.resultados);
+                out.write("\"ruta\": ");
+                JSON.writeObject(out, responseFacturaRuta.ruta);
+                out.write(", \"facturas\": ");
+                JSON.writeArrayOfObjects(out, responseFacturaRuta.facturas);
+                out.write(", \"errores\": ");
+                JSON.writeArrayOfObjects(out, responseFacturaRuta.errores);
                 out.write("}");
             }
 

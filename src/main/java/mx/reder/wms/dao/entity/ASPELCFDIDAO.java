@@ -21,6 +21,8 @@ public class ASPELCFDIDAO implements DatabaseRecord, DatabaseRecordASPEL, java.i
     public String MSJ_CANC = null;
     public String PENDIENTE = null;
     public Integer CVE_USUARIO = null;
+    public String MOTIVO_CANC = null;
+    public String UUID_REL = null;
 
     public ASPELCFDIDAO() {
     }

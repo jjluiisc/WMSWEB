@@ -8,10 +8,15 @@ import com.atcloud.test.TestHttpServletResponse;
 import com.atcloud.test.TestHttpSession;
 import com.atcloud.test.TestServletContext;
 import com.atcloud.util.CommonServices;
+import com.atcloud.util.Fecha;
 import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
+import mx.reder.wms.cfdi.EncriptacionFacade;
+import mx.reder.wms.command.FacturaRutaCommand;
+import mx.reder.wms.command.PaqueteDocumentalCommand;
 import mx.reder.wms.dao.engine.DatabaseDataSource;
+import mx.reder.wms.dao.entity.CertificadoSelloDigitalDAO;
 import mx.reder.wms.reports.ReporteadorImp;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
@@ -25,6 +30,9 @@ public class Test {
     private String tabla_aspel = null;
     private String reporte = null;
     private String excel = null;
+    private String ruta = null;
+    private String paqueteDocumental = null;
+    private String validaCSD = null;
 
     private void parseArgs(String[] args) {
         for(int i=0; i<args.length; i++) {
@@ -37,6 +45,12 @@ public class Test {
                 excel = args[i+1];
             if (arg.compareTo("--tabla-aspel")==0)
                 tabla_aspel = args[i+1];
+            if (arg.compareTo("--ruta")==0)
+                ruta = args[i+1];
+            if (arg.compareTo("--paquete-documental")==0)
+                paqueteDocumental = args[i+1];
+            if (arg.compareTo("--valida-csd")==0)
+                validaCSD = args[i+1];
         }
     }
 
@@ -81,7 +95,7 @@ public class Test {
             dds.close();
         }
         if (test) {
-            try {
+            /*try {
                 DatabaseDataSource dds = new DatabaseDataSource("reder");
                 Connection connection = dds.getConnection();
                 DatabaseServices ds = new DatabaseServices(connection);
@@ -89,7 +103,7 @@ public class Test {
                 dds.close();
             } catch(Exception e) {
                 log.error(e.getMessage(), e);
-            }
+            }*/
         }
         if (excel!=null) {
             FileOutputStream fos = new FileOutputStream("reporte.xlsx");
@@ -150,6 +164,75 @@ public class Test {
             connection.close();
 
             fos.close();
+        }
+        if (ruta!=null) {
+            CommonServices cs = new CommonServices();
+            Connection connection = cs.getConnection("reder");
+            DatabaseServices ds = new DatabaseServices(connection);
+
+            TestHttpServletResponse response = new TestHttpServletResponse(System.out);
+            TestHttpServletRequest request = new TestHttpServletRequest();
+
+            TestHttpSession session = new TestHttpSession();
+            request.setSession(session);
+
+            request.setParameter("usuario", "joelbecerram@gmail.com");
+            request.setParameter("compania", "01");
+            request.setParameter("ruta", ruta);
+
+            try {
+                FacturaRutaCommand command = new FacturaRutaCommand();
+                command.execute(request, response, ds);
+            } catch(Exception e) {
+                log.error(e.getMessage(), e);
+            } finally {
+                connection.close();
+            }
+        }
+        if (paqueteDocumental!=null) {
+            CommonServices cs = new CommonServices();
+            Connection connection = cs.getConnection("reder");
+            DatabaseServices ds = new DatabaseServices(connection);
+
+            TestHttpServletResponse response = new TestHttpServletResponse(System.out);
+            TestHttpServletRequest request = new TestHttpServletRequest();
+
+            TestHttpSession session = new TestHttpSession();
+            request.setSession(session);
+
+            request.setParameter("usuario", "joelbecerram@gmail.com");
+            request.setParameter("compania", "01");
+            request.setParameter("idruta", paqueteDocumental);
+
+            try {
+                PaqueteDocumentalCommand command = new PaqueteDocumentalCommand();
+                command.execute(request, response, ds);
+            } catch(Exception e) {
+                log.error(e.getMessage(), e);
+            } finally {
+                connection.close();
+            }
+        }
+        if (validaCSD!=null) {
+            CommonServices cs = new CommonServices();
+            Connection connection = cs.getConnection("reder");
+            DatabaseServices ds = new DatabaseServices(connection);
+
+            try {
+                String fecha = Fecha.getFechaHora();
+                CertificadoSelloDigitalDAO certificadoSelloDigitalDAO = (CertificadoSelloDigitalDAO)ds.first(new CertificadoSelloDigitalDAO(),
+                    "compania = '"+validaCSD+"' AND fechainicial <= '"+fecha+"' AND fechafinal >= '"+fecha+"'");
+                if(certificadoSelloDigitalDAO==null)
+                    throw new Exception("No existe CSD para la compania = '"+validaCSD+"' fecha = '"+fecha+"'");
+
+                EncriptacionFacade.getInstance().validar(certificadoSelloDigitalDAO);
+
+            } catch(Exception e) {
+                log.error(e.getMessage(), e);
+            } finally {
+                connection.close();
+            }
+
         }
     }
 

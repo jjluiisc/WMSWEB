@@ -1,6 +1,7 @@
 package mx.reder.wms.cfdi.entity;
 
 import mx.gob.sat.sitioInternet.cfd.catalogos.CClaveUnidad;
+import mx.gob.sat.sitioInternet.cfd.catalogos.CObjetoImp;
 
 public interface ConceptoCFD {
     public double getCantidad();
@@ -17,6 +18,7 @@ public interface ConceptoCFD {
     public double getImporte();
     public double getPrDescuento();
     public double getDescuento();
+    public CObjetoImp.Enum getObjetoImp();
     public double getPrIva();
     public double getIva();
     public double getTotal();

@@ -1,25 +1,23 @@
 package mx.reder.wms.cfdi;
 
-import mx.gob.sat.cfd.x3.ComprobanteDocument;
-
 public class RespuestaPAC {
-    private ComprobanteDocument cd = null;
+    private String cfdi = null;
     private String request = null;
     private String response = null;
     private String timbreFiscal = null;
 
     /**
-     * @return the cd
+     * @return the cfdi
      */
-    public ComprobanteDocument getCd() {
-        return cd;
+    public String getCfdi() {
+        return cfdi;
     }
 
     /**
-     * @param cd the cd to set
+     * @param cfdi the cfdi to set
      */
-    public void setCd(ComprobanteDocument cd) {
-        this.cd = cd;
+    public void setCfdi(String cfdi) {
+        this.cfdi = cfdi;
     }
 
     /**

@@ -379,27 +379,27 @@ function _reporteTicket() {
     loadMainPage("/wms/view/almacen/reporteticket.html", onComplete);
 }
 
-function facturarRuta() {
+function rutas() {
     var state = {
-        func: "_facturarRuta"
+        func: "_rutas"
     };
     pushState(state);
 
-    _facturarRuta();
+    _rutas();
 }
 
-function _facturarRuta() {
-    if (!validaPermiso("facturarRuta"))
+function _rutas() {
+    if (!validaPermiso("rutas"))
         return false;
 
     function onComplete() {
         function onCompleteII() {
             initFacturar();
         };
-        loadScript("/wms/js/view/almacen/facturarruta.js", onCompleteII);
+        loadScript("/wms/js/view/almacen/rutas.js", onCompleteII);
     };
 
-    loadMainPage("/wms/view/almacen/facturarruta.html", onComplete);
+    loadMainPage("/wms/view/almacen/rutas.html", onComplete);
 }
 
 function capturaInventario() {

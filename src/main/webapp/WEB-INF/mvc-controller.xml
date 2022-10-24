@@ -39,7 +39,6 @@
         <content-type>application/json</content-type>
     </command>
 
-
     <command id="GeneraOrdenesSurtidoPedidos" name="Genera Ordenes de Surtido de Pedidos">
         <class-name>mx.reder.wms.command.GeneraOrdenesSurtidoPedidosCommand</class-name>
         <content-type>application/json</content-type>
@@ -91,6 +90,10 @@
     </command>
     <command id="FacturaRuta" name="Factura una Ruta">
         <class-name>mx.reder.wms.command.FacturaRutaCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="PaqueteDocumental" name="Paquete Documental de Ruta">
+        <class-name>mx.reder.wms.command.PaqueteDocumentalCommand</class-name>
         <content-type>application/json</content-type>
     </command>
 

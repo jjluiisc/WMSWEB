@@ -4,10 +4,11 @@ import com.atcloud.dao.engine.DatabaseRecord;
 import com.atcloud.dao.engine.DatabaseRecordABC;
 import com.atcloud.dao.engine.DatabaseServices;
 import com.atcloud.util.ServletUtilities;
+import mx.reder.wms.cfdi.entity.EmisorCFD;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-public class CompaniaDAO implements DatabaseRecord, DatabaseRecordABC, java.io.Serializable {
+public class CompaniaDAO implements DatabaseRecord, DatabaseRecordABC, EmisorCFD, java.io.Serializable {
     public String compania = "";
     public String razonsocial = "";
     public String nombre = "";
@@ -109,5 +110,20 @@ public class CompaniaDAO implements DatabaseRecord, DatabaseRecordABC, java.io.S
         if (existe) {
             ds.delete(this);
         }
+    }
+
+    @Override
+    public String getNombre() {
+        return razonsocial;
+    }
+
+    @Override
+    public String getRfc() {
+        return rfc;
+    }
+
+    @Override
+    public String getRegimenFiscal() {
+        return regimenfiscal;
     }
 }

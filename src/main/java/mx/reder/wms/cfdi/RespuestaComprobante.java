@@ -1,6 +1,6 @@
 package mx.reder.wms.cfdi;
 
-import mx.gob.sat.cfd.x3.ComprobanteDocument;
+import mx.gob.sat.cfd.x4.ComprobanteDocument;
 import mx.gob.sat.timbreFiscalDigital.TimbreFiscalDigitalDocument;
 
 public class RespuestaComprobante {

@@ -3,9 +3,13 @@ package mx.reder.wms.dao.entity;
 import java.util.Date;
 import com.atcloud.dao.engine.DatabaseRecord;
 import com.atcloud.dao.engine.DatabaseRecordABC;
+import com.atcloud.dao.engine.DatabaseServices;
 import com.atcloud.util.Fecha;
+import mx.reder.wms.cfdi.entity.CertificadoSelloDigitalCFD;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
-public class CertificadoSelloDigitalDAO implements DatabaseRecord, DatabaseRecordABC, java.io.Serializable {
+public class CertificadoSelloDigitalDAO implements DatabaseRecord, DatabaseRecordABC, CertificadoSelloDigitalCFD, java.io.Serializable {
     public String compania = "";
     public String nocertificado = "";
     public String password = "";
@@ -86,5 +90,62 @@ public class CertificadoSelloDigitalDAO implements DatabaseRecord, DatabaseRecor
     @Override
     public String toString() {
         return compania+";"+nocertificado;
+    }
+
+    public void delete(DatabaseServices ds, String[] valores) throws Exception {
+        JSONObject json = (JSONObject)JSONValue.parse(valores[0]);
+
+        this.compania = (String)json.get("compania");
+        this.nocertificado = (String)json.get("nocertificado");
+        boolean existe = ds.exists(this);
+
+        if (existe) {
+            ds.delete(this);
+        }
+    }
+
+    @Override
+    public String getNocertificado() {
+        return nocertificado;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public Date getFechaInicial() {
+        return fechainicial;
+    }
+
+    @Override
+    public Date getFechaFinal() {
+        return fechafinal;
+    }
+
+    @Override
+    public byte[] getArchivoKey() {
+        return archivokey;
+    }
+
+    @Override
+    public byte[] getArchivoCer() {
+        return archivocer;
+    }
+
+    @Override
+    public void setNocertificado(String nocertificado) {
+        this.nocertificado = nocertificado;
+    }
+
+    @Override
+    public void setFechaInicial(Date fechainicial) {
+        this.fechainicial = fechainicial;
+    }
+
+    @Override
+    public void setFechaFinal(Date fechafinal) {
+        this.fechafinal = fechafinal;
     }
 }

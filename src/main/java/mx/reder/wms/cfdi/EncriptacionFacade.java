@@ -3,180 +3,137 @@ package mx.reder.wms.cfdi;
 import java.io.ByteArrayInputStream;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Security;
 import java.security.Signature;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import mx.reder.wms.dao.entity.CertificadoSelloDigitalDAO;
-import org.apache.commons.codec.binary.Base64;
+import mx.reder.wms.cfdi.entity.CertificadoSelloDigitalCFD;
+import org.apache.commons.ssl.PKCS8Key;
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo;
-import org.bouncycastle.asn1.pkcs.EncryptionScheme;
-import org.bouncycastle.asn1.pkcs.PBES2Parameters;
-import org.bouncycastle.asn1.pkcs.PBKDF2Params;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.pkcs.RC2CBCParameter;
-import org.bouncycastle.crypto.BufferedBlockCipher;
-import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.PBEParametersGenerator;
-import org.bouncycastle.crypto.engines.DESedeEngine;
-import org.bouncycastle.crypto.engines.RC2Engine;
-import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
-import org.bouncycastle.crypto.modes.CBCBlockCipher;
-import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
-import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class EncriptacionFacade {
     static Logger log = Logger.getLogger(EncriptacionFacade.class.getName());
     private static EncriptacionFacade singleton = null;
-    private Map privateKeys = null;
-    private Map certificados = null;
-    private Map certificadosBase64 = null;
+    private Map<String, PrivateKey> privateKeys = null;
+    private Map<String, CertificadoSelloDigitalCFD> certificados = null;
+    private Map<String, String> certificadosBase64 = null;
 
     private EncriptacionFacade() {
-        privateKeys = new HashMap();
-        certificados = new HashMap();
-        certificadosBase64 = new HashMap();
+        privateKeys = new HashMap<>();
+        certificados = new HashMap<>();
+        certificadosBase64 = new HashMap<>();
     }
 
-    public void inicializa(CertificadoSelloDigitalDAO efacturasellos) throws Exception {
-        if(certificados.containsKey(efacturasellos.nocertificado))
+    public void inicializa(CertificadoSelloDigitalCFD efacturasellos) throws Exception {
+        if(certificados.containsKey(efacturasellos.getNocertificado()))
             return;
 
         log.info("Inicializando el certificado ["+efacturasellos.toString()+"] ...");
 
-        certificados.put(efacturasellos.nocertificado, efacturasellos);
+        certificados.put(efacturasellos.getNocertificado(), efacturasellos);
 
-        Base64 base = new Base64();
-        certificadosBase64.put(efacturasellos.nocertificado, new String(base.encode(efacturasellos.archivocer)));
+        certificadosBase64.put(efacturasellos.getNocertificado(), new String(Base64.getEncoder().encode(efacturasellos.getArchivoCer())));
     }
 
-    public boolean validar(CertificadoSelloDigitalDAO efacturasellos) throws Exception {
+    public void delete(String nocertificado) {
+        certificados.remove(nocertificado);
+        certificadosBase64.remove(nocertificado);
+    }
+
+    public boolean validar(CertificadoSelloDigitalCFD efacturasellos) throws Exception {
         log.info("Validando el Certificado ["+efacturasellos+"] ...");
 
-        X509Certificate cert = getCertificate(efacturasellos);
+        X509Certificate cert = getCertificate(efacturasellos.getArchivoCer());
 
-        boolean salvar = false;
         byte[] bSerialNumber = cert.getSerialNumber().toByteArray();
         StringBuilder serialNumber = new StringBuilder();
         for(int i=0; i<bSerialNumber.length; i++)
             serialNumber.append((char)bSerialNumber[i]);
         String nocertificado = serialNumber.toString();
         log.info("serialNumber = "+nocertificado);
-        if (!nocertificado.equals(efacturasellos.nocertificado)) {
+        if (!nocertificado.equals(efacturasellos.getNocertificado())) {
             log.info("Se cambio el numero del Certificado a "+nocertificado);
-            efacturasellos.nocertificado = nocertificado;
-            salvar = true;
+            efacturasellos.setNocertificado(nocertificado);
         }
         log.info("notBefore = "+cert.getNotBefore());
-        if (cert.getNotBefore().compareTo(efacturasellos.fechainicial)!=0) {
+        if (cert.getNotBefore().compareTo(efacturasellos.getFechaInicial())!=0) {
             log.info("Se cambio la fecha inicial del Certificado a "+cert.getNotBefore());
-            efacturasellos.fechainicial = new java.sql.Timestamp(cert.getNotBefore().getTime());
-            salvar = true;
+            efacturasellos.setFechaInicial(cert.getNotBefore());
         }
         log.info("notAfter = "+cert.getNotAfter());
-        if (cert.getNotAfter().compareTo(efacturasellos.fechafinal)!=0) {
+        if (cert.getNotAfter().compareTo(efacturasellos.getFechaFinal())!=0) {
             log.info("Se cambio la fecha final del Certificado a "+cert.getNotAfter());
-            efacturasellos.fechafinal = new java.sql.Timestamp(cert.getNotAfter().getTime());
-            salvar = true;
+            efacturasellos.setFechaFinal(cert.getNotAfter());
         }
 
         log.info("issuerDN = "+cert.getIssuerDN().toString());
+        log.info("issuerX500Principal = "+cert.getIssuerX500Principal().toString());
         log.info("subjectDN = "+cert.getSubjectDN().toString());
+        log.info("subjectX500Principal = "+cert.getSubjectX500Principal().toString());
+        List<String> usages = cert.getExtendedKeyUsage();
+        if (usages!=null) {
+            for (String usage : usages) {
+                log.info("usage = "+usage);
+            }
+        }
+        log.info("sigAlgOID = "+cert.getSigAlgOID());
+        log.info("sigAlgName = "+cert.getSigAlgName());
 
-        if(salvar)
-            log.info("Ahora el certificado es ["+efacturasellos.toString()+"]");
+        log.info("Ahora el certificado es ["+efacturasellos.toString()+"]");
 
-        if(!certificados.containsKey(efacturasellos.nocertificado))
-            inicializa(efacturasellos);
+        delete(efacturasellos.getNocertificado());
+        inicializa(efacturasellos);
 
-        String signature = firma(efacturasellos.nocertificado, new java.util.Date().toString());
+        String data = new java.util.Date().toString();
+        log.info("data = "+data);
+
+        String signature = firma(efacturasellos.getNocertificado(), data);
         log.info("signature = "+signature);
-        return salvar;
+
+        boolean valid = verifica(efacturasellos.getNocertificado(), data, Base64.getDecoder().decode(signature.getBytes()));
+        log.info("valid = "+valid);
+
+        return valid;
     }
 
-    private byte[] obtenDatosLLavePrivada(byte[] datosArchivo, String passwordStr) throws Exception {
-        ByteArrayInputStream    bIn = new ByteArrayInputStream(datosArchivo);
-        ASN1InputStream         aIn = new ASN1InputStream(bIn);
-        EncryptedPrivateKeyInfo info = new EncryptedPrivateKeyInfo((ASN1Sequence)aIn.readObject());
-        PBES2Parameters         alg = new PBES2Parameters((ASN1Sequence)info.getEncryptionAlgorithm().getParameters());
-        PBKDF2Params            func = PBKDF2Params.getInstance(alg.getKeyDerivationFunc().getParameters());
-        EncryptionScheme        scheme = alg.getEncryptionScheme();
-        int keySize = 0;
-        if (func.getKeyLength() != null) {
-            keySize = func.getKeyLength().intValue() * 8;
-        }
-        int     iterationCount = func.getIterationCount().intValue();
-        byte[]  salt = func.getSalt();
-        char[]  password = passwordStr.toCharArray();
-
-        PBEParametersGenerator  generator = new PKCS5S2ParametersGenerator();
-        generator.init(
-            PBEParametersGenerator.PKCS5PasswordToBytes(password),
-            salt,
-            iterationCount);
-
-        CipherParameters    param;
-        BufferedBlockCipher cipherAux =  null;
-        if (PKCSObjectIdentifiers.RC2_CBC.equals( scheme.getObjectId() )) {
-            RC2CBCParameter rc2Params = new RC2CBCParameter((ASN1Sequence)scheme.getObject());
-            byte[]  iv = rc2Params.getIV();
-            param = new ParametersWithIV(generator.generateDerivedParameters(keySize), iv);
-            cipherAux = new PaddedBufferedBlockCipher(new CBCBlockCipher(new RC2Engine()));
-        } else if (PKCSObjectIdentifiers.des_EDE3_CBC.equals(scheme.getObjectId())) {
-            keySize=192;//Tamano de llave
-            byte[]  iv = ((ASN1OctetString)scheme.getObject()).getOctets();
-            param = new ParametersWithIV(generator.generateDerivedParameters(keySize), iv);
-            cipherAux = new PaddedBufferedBlockCipher(new CBCBlockCipher(new DESedeEngine()));
-        } else {
-            byte[]  iv = ((ASN1OctetString)scheme.getObject()).getOctets();
-            param = new ParametersWithIV(generator.generateDerivedParameters(keySize), iv);
-        }
-
-        cipherAux.init(false, param);
-
-        byte[]  data = info.getEncryptedData();
-        byte[]  out = new byte[cipherAux.getOutputSize(data.length)];
-        int     len = cipherAux.processBytes(data, 0, data.length, out, 0);
-
-        len += cipherAux.doFinal(out, len);
-        return out;
-    }
-
-    private PrivateKey obtenLLavePrivada(byte[] datosLLave) throws Exception {
-        PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(datosLLave);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA", "BC");
-        return keyFactory.generatePrivate(privateKeySpec);
-    }
-
-    private PrivateKey initPrivateKey(byte[] datosArchivoLLave, String password) throws Exception {
+    public PrivateKey initPrivateKey(byte[] datosArchivoLLave, String password) throws Exception {
         Security.addProvider(new BouncyCastleProvider());
-        byte[] datosLLave = obtenDatosLLavePrivada(datosArchivoLLave, password);
-        return obtenLLavePrivada(datosLLave);
+        PKCS8Key pkcs8 = new PKCS8Key(datosArchivoLLave, password.toCharArray());
+                KeyFactory privateKeyFactory = KeyFactory.getInstance("RSA");
+                PKCS8EncodedKeySpec pkcs8Encoded = new PKCS8EncodedKeySpec(pkcs8.getDecryptedBytes());
+                PrivateKey privateKey = privateKeyFactory.generatePrivate(pkcs8Encoded);
+
+        return privateKey;
     }
 
-    private PrivateKey getPrivateKey(CertificadoSelloDigitalDAO efacturasellos) throws Exception {
-        PrivateKey privateKey = (PrivateKey)privateKeys.get(efacturasellos.nocertificado);
+    private PrivateKey getPrivateKey(CertificadoSelloDigitalCFD efacturasellos) throws Exception {
+        PrivateKey privateKey = (PrivateKey)privateKeys.get(efacturasellos.getNocertificado());
         if(privateKey==null) {
-            privateKey = initPrivateKey(efacturasellos.archivokey, efacturasellos.password);
-            privateKeys.put(efacturasellos.nocertificado, privateKey);
+            privateKey = initPrivateKey(efacturasellos.getArchivoKey(), efacturasellos.getPassword());
+            privateKeys.put(efacturasellos.getNocertificado(), privateKey);
         }
         return privateKey;
+    }
+
+    private PublicKey getPublicKey(byte[] certificate) throws Exception {
+        Security.addProvider(new BouncyCastleProvider());
+        X509Certificate cert = getCertificate(certificate);
+        return cert.getPublicKey();
     }
 
     public String firma(String nocertificado, String data) throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         Signature sig = Signature.getInstance("SHA256withRSA", "BC");
 
-        CertificadoSelloDigitalDAO efacturasellos = (CertificadoSelloDigitalDAO)certificados.get(nocertificado);
+        CertificadoSelloDigitalCFD efacturasellos = (CertificadoSelloDigitalCFD)certificados.get(nocertificado);
         if(efacturasellos==null)
             throw new Exception("No se ha inicializado este certificado ["+nocertificado+"]");
 
@@ -184,19 +141,50 @@ public class EncriptacionFacade {
         sig.update(data.getBytes("UTF-8"));
         byte salida[] = sig.sign();
 
-        Base64 base = new Base64();
-        byte[] all = base.encode(salida);
+        byte[] all = Base64.getEncoder().encode(salida);
 
         return new String(all);
+    }
+
+    public String firmaBytes(String nocertificado, byte[] data) throws Exception {
+        Security.addProvider(new BouncyCastleProvider());
+        Signature sig = Signature.getInstance("SHA256withRSA", "BC");
+
+        CertificadoSelloDigitalCFD efacturasellos = (CertificadoSelloDigitalCFD)certificados.get(nocertificado);
+        if(efacturasellos==null)
+            throw new Exception("No se ha inicializado este certificado ["+nocertificado+"]");
+
+        sig.initSign(getPrivateKey(efacturasellos));
+        sig.update(data);
+        byte salida[] = sig.sign();
+
+        byte[] all = Base64.getEncoder().encode(salida);
+
+        return new String(all);
+    }
+
+    public boolean verifica(String nocertificado, String data, byte[] signature) throws Exception {
+        Security.addProvider(new BouncyCastleProvider());
+        Signature sig = Signature.getInstance("SHA256withRSA", "BC");
+
+        CertificadoSelloDigitalCFD efacturasellos = (CertificadoSelloDigitalCFD)certificados.get(nocertificado);
+        if(efacturasellos==null)
+            throw new Exception("No se ha inicializado este certificado ["+nocertificado+"]");
+
+        sig.initVerify(getPublicKey(efacturasellos.getArchivoCer()));
+        sig.update(data.getBytes("UTF-8"));
+        boolean valid = sig.verify(signature);
+
+        return valid;
     }
 
     public String getCertificadoBase64(String nocertificado) {
         return (String)certificadosBase64.get(nocertificado);
     }
 
-    public X509Certificate getCertificate(CertificadoSelloDigitalDAO efacturasellos) throws Exception {
+    public X509Certificate getCertificate(byte[] certificate) throws Exception {
         Security.addProvider(new BouncyCastleProvider());
-        ByteArrayInputStream bais = new ByteArrayInputStream(efacturasellos.archivocer);
+        ByteArrayInputStream bais = new ByteArrayInputStream(certificate);
         CertificateFactory fact = CertificateFactory.getInstance("X.509", "BC");
         Certificate cert = fact.generateCertificate(bais);
         return (X509Certificate) cert;
