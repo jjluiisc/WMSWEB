@@ -130,7 +130,7 @@ function generarReporte() {
                 +"&flsurtido="+s_flsurtido
                 +"&contenedor="+s_contenedor
         download("/wms/Reporteador?reporte=OrdenSurtidoPedidoCertificaTicket&"+params);
-        download("/wms/Reporteador?reporte=OrdenSurtidoPedidoCertificaDetalleTicket&"+params);
+        //download("/wms/Reporteador?reporte=OrdenSurtidoPedidoCertificaDetalleTicket&"+params);
         
         window.history.back();
     };
