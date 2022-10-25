@@ -565,21 +565,21 @@ public class FacturaRutaBusiness {
 
         // La clave en el RFC del receptor del CFDI debe ser la misma que la registrada para el emisor.
         ReceptorImp receptorCFD = new ReceptorImp();
-        receptorCFD.nombre = companiaDAO.razonsocial;
-        receptorCFD.rfc = companiaDAO.rfc;
-        receptorCFD.regimenFiscal = companiaDAO.regimenfiscal;
+        receptorCFD.nombre = aspelClienteDAO.NOMBRE;
+        receptorCFD.rfc = aspelClienteDAO.RFC;
+        receptorCFD.regimenFiscal = aspelClienteDAO.REG_FISC;
         receptorCFD.usoCFDI = aspelClienteDAO.USO_CFDI;
         receptorCFD.formaDePago = aspelClienteDAO.FORMADEPAGOSAT;
         receptorCFD.metodoDePago = aspelClienteDAO.METODODEPAGO;
         receptorCFD.numCtaPago = null;
-        receptorCFD.calle = direccionDAO.calle;
-        receptorCFD.noExterior = direccionDAO.noexterior;
-        receptorCFD.noInterior = direccionDAO.nointerior;
-        receptorCFD.colonia = direccionDAO.colonia;
-        receptorCFD.municipio = direccionDAO.poblacion;
-        receptorCFD.estado = direccionDAO.entidadfederativa;
-        receptorCFD.pais = direccionDAO.pais;
-        receptorCFD.codigoPostal = direccionDAO.codigopostal;
+        receptorCFD.calle = aspelClienteDAO.CALLE;
+        receptorCFD.noExterior = aspelClienteDAO.NUMEXT;
+        receptorCFD.noInterior = aspelClienteDAO.NUMINT;
+        receptorCFD.colonia = aspelClienteDAO.COLONIA;
+        receptorCFD.municipio = aspelClienteDAO.MUNICIPIO;
+        receptorCFD.estado = aspelClienteDAO.ESTADO;
+        receptorCFD.pais = aspelClienteDAO.PAIS;
+        receptorCFD.codigoPostal = aspelClienteDAO.CODIGO;
 
         DocumentoImp documentoCFD = new DocumentoImp();
         documentoCFD.serie = aspelFacturaDAO.TIP_DOC;
@@ -596,13 +596,21 @@ public class FacturaRutaBusiness {
         //
         //
         //
-        receptorCFD.usoCFDI = "G01";
-        receptorCFD.metodoDePago = "PPD";
-        receptorCFD.formaDePago = "99";
-        receptorCFD.rfc = "GNE130422S71";
-        receptorCFD.nombre = "GNEW";
-        receptorCFD.regimenFiscal = "601";
-        receptorCFD.codigoPostal = "06700";
+        //receptorCFD.usoCFDI = "G01";
+        //receptorCFD.metodoDePago = "PPD";
+        //receptorCFD.formaDePago = "99";
+        //receptorCFD.rfc = "GNE130422S71";
+        //receptorCFD.nombre = "GNEW";
+        //receptorCFD.regimenFiscal = "601";
+        //receptorCFD.codigoPostal = "06700";
+        
+        if (aspelClienteDAO.RFC.compareTo("XAXX010101000")==0){
+            receptorCFD.usoCFDI = "S01";
+            receptorCFD.regimenFiscal = "616";
+            //receptorCFD.nombre = aspelClienteDAO.NOMBRE;
+            receptorCFD.rfc = "XAXX010101000";
+            receptorCFD.codigoPostal = direccionDAO.codigopostal;
+        }
         //
         //
         //

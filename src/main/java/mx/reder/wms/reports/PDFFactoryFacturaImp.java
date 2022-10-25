@@ -56,6 +56,7 @@ import mx.reder.wms.dao.entity.MunicipioSATDAO;
 import mx.reder.wms.dao.entity.OrdenSurtidoPedidoDAO;
 import mx.reder.wms.dao.entity.RutaFacturaDAO;
 import mx.reder.wms.to.ASPELFacturaDetalleTO;
+import mx.reder.wms.util.Configuracion;
 import org.apache.log4j.Logger;
 
 public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFactory {
@@ -128,14 +129,9 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
     }
 
     private String getFont() {
-        File context = new File("/Users/joelbecerramiranda/Apps/LaEuropea/CFDIWEB/src/main/webapp");
-        //File fileLogo = new File(context, "/assets/fonts/Tahoma.ttf");
-        //File fileLogo = new File(context, "/assets/fonts/Arial.ttf");
-        //File fileLogo = new File(context, "/assets/fonts/Herculanum.ttf");
-        //File fileLogo = new File(context, "/assets/fonts/Microsoft Sans Serif.ttf");
-        File fileLogo = new File(context, "/assets/fonts/Verdana.ttf");
-        if (fileLogo.exists())
-            return fileLogo.getAbsolutePath();
+        File filefont = new File(Configuracion.getInstance().getProperty("ruta.font"));
+        if (filefont.exists())
+            return filefont.getAbsolutePath();
         return null;
     }
 

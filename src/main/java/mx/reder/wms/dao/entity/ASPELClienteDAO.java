@@ -92,6 +92,7 @@ public class ASPELClienteDAO implements DatabaseRecord, DatabaseRecordASPEL, jav
     public String FORMADEPAGOSAT = "";
     public String ADDENDAE = "";
     public String ADDENDAG = "";
+    public String REG_FISC = "";
 
     public ASPELClienteDAO() {
     }

@@ -58,7 +58,7 @@ public class PaqueteDocumentalBusiness {
 
         File dir = new File(Configuracion.getInstance().getProperty("ruta.pdf"));
         if (!dir.exists())
-            throw new WebException("No este este directorio ["+dir.getAbsolutePath()+"]");
+            throw new WebException("No existe este directorio ["+dir.getAbsolutePath()+"]");
 
         Document document = new Document(PageSize.A4, 0, 0, 0, 0);
 
@@ -150,7 +150,7 @@ public class PaqueteDocumentalBusiness {
                 }
 
                 ComprobantePDF comprobantePDF = new ComprobantePDF();
-                comprobantePDF.setContextPath("/Users/joelbecerramiranda/Apps/REDER/WMSWEB/src/main/webapp/");
+                comprobantePDF.setContextPath("/Program Files/Apache Software Foundation/Tomcat 9.0/webapps/wms/");
                 byte[] bytesPdf = comprobantePDF.pdf(ds, rutaCfdiDAO, rutaFacturaDAO, ordenSurtidoPedidoDAO,
                         aspelPedidoDAO, aspelVendedorDAO, aspelFacturaDAO, aspelClienteDAO, aspelInformacionEnvioDAO, detallesFactura);
 
