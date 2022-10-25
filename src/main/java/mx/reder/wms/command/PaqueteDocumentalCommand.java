@@ -44,7 +44,7 @@ public class PaqueteDocumentalCommand implements WebCommandInterface {
                 filePD = paquete.paqueteDocumental(compania, usuario, ruta);
 
                 mensajeTO.msg = "OK";
-                mensajeTO.wrn = filePD.getAbsolutePath();
+                mensajeTO.wrn = filePD.getAbsolutePath().replaceAll("\\\\", "/");
 
             } catch(Exception e) {
                 log.error(e.getMessage(), e);
