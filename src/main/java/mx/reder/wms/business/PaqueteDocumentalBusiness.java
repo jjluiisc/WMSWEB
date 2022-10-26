@@ -127,7 +127,7 @@ public class PaqueteDocumentalBusiness {
                         +"pf.COMI, pf.APAR, pf.ACT_INV, pf.NUM_ALM, pf.POLIT_APLI, pf.TIP_CAM, pf.UNI_VENTA, pf.TIPO_PROD, pf.CVE_OBS, pf.REG_SERIE, pf.E_LTPD,"
                         +"pf.TIPO_ELEM, pf.NUM_MOV, pf.TOT_PARTIDA, pf.IMPRIMIR, pf.MAN_IEPS, pf.APL_MAN_IMP, pf.CUOTA_IEPS, pf.APL_MAN_IEPS, pf.MTO_PORC,"
                         +"pf.MTO_CUOTA, pf.CVE_ESQ, pf.DESCR_ART, pf.UUID, pf.VERSION_SINC, p.CVE_PRODSERV, p.CVE_UNIDAD, p.DESCR, p.UNI_MED, "
-                        +"COALESCE(pl.CAMPLIB5, 0) AS PREPUB "
+                        +"COALESCE(pl.CAMPLIB5, 0) AS PREPUB, pl.CAMPLIB7 AS SUSTANCIAACTIVA "
                         +"FROM PAR_FACTF"+rutaFacturaDAO.compania+" pf LEFT JOIN INVE"+rutaFacturaDAO.compania+" p ON pf.CVE_ART = p.CVE_ART "
                         +"LEFT JOIN INVE_CLIB"+rutaFacturaDAO.compania+" pl ON pf.CVE_ART = pl.CVE_PROD "
                         +"WHERE pf.CVE_DOC = '"+aspelFacturaDAO.CVE_DOC+"'");
@@ -150,7 +150,6 @@ public class PaqueteDocumentalBusiness {
                 }
 
                 ComprobantePDF comprobantePDF = new ComprobantePDF();
-                comprobantePDF.setContextPath("/Program Files/Apache Software Foundation/Tomcat 9.0/webapps/wms/");
                 byte[] bytesPdf = comprobantePDF.pdf(ds, rutaCfdiDAO, rutaFacturaDAO, ordenSurtidoPedidoDAO,
                         aspelPedidoDAO, aspelVendedorDAO, aspelFacturaDAO, aspelClienteDAO, aspelInformacionEnvioDAO, detallesFactura);
 

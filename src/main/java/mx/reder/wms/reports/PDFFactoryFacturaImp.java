@@ -24,7 +24,6 @@ import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,7 +55,6 @@ import mx.reder.wms.dao.entity.MunicipioSATDAO;
 import mx.reder.wms.dao.entity.OrdenSurtidoPedidoDAO;
 import mx.reder.wms.dao.entity.RutaFacturaDAO;
 import mx.reder.wms.to.ASPELFacturaDetalleTO;
-import mx.reder.wms.util.Configuracion;
 import org.apache.log4j.Logger;
 
 public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFactory {
@@ -65,8 +63,11 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
     private DatabaseServices ds = null;
     private String cadenaOriginal = null;
     private String qr = null;
+    private String logoPath = null;
     public BaseFont baseFont = null;
     public BaseFont baseFontImp = null;
+    public Font huge0 = null;
+    public Font huge0Bold = null;
     public Font header0 = null;
     public Font header0Bold = null;
     public Font header = null;
@@ -102,14 +103,18 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
     private ArrayList<ASPELFacturaDetalleTO> detallesFactura;
 
     @Override
-    public void setup(String fontPath) throws Exception {
+    public void setup(String fontPath, String logoPath) throws Exception {
         log.info("Iniciando PDFFactory ...");
 
         String font = fontPath==null ? BaseFont.HELVETICA : fontPath;
         log.debug(font);
+        this.logoPath = logoPath;
+        log.debug(logoPath);
 
         baseFont = BaseFont.createFont(BaseFont.COURIER, BaseFont.CP1252, BaseFont.EMBEDDED);
         baseFontImp = BaseFont.createFont(font, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+        huge0 = new Font(baseFontImp, 16f, Font.NORMAL);
+        huge0Bold = new Font(baseFontImp, 16f, Font.BOLD);
         header0 = new Font(baseFontImp, 12f, Font.NORMAL);
         header0Bold = new Font(baseFontImp, 12f, Font.BOLD);
         header = new Font(baseFontImp, 9f, Font.NORMAL);
@@ -126,13 +131,6 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         colorBlack = new Color(0x35, 0x35, 0x35);
 
         log.info("Listo");
-    }
-
-    private String getFont() {
-        File filefont = new File(Configuracion.getInstance().getProperty("ruta.font"));
-        if (filefont.exists())
-            return filefont.getAbsolutePath();
-        return null;
     }
 
     @Override
@@ -523,6 +521,12 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
                 tipoComprobante = "Pago";
                 break;
         }
+        
+        // Logo
+        if (logoPath!=null) {
+            Image logoImage = Image.getInstance(logoPath);
+            writeElement(logoImage, 15f, 820f, 95f, 765f); 
+        }
 
         // Emisor
         Paragraph emisorParagraph = new Paragraph();
@@ -539,7 +543,7 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         addChunk(emisorParagraph, "Numero de certificado: ", header2Bold, 0f);
         addChunk(emisorParagraph, comprobante.getNoCertificado(), header2);
 
-        writeElement(emisorParagraph, 15f, 820f, 300f, 765f);
+        writeElement(emisorParagraph, 100f, 820f, 300f, 765f);
 
         // Comprobante
         drawRectangleStroke(300f, 805f, 580f, 820f, clearGray, clearGray);
@@ -625,7 +629,7 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         addChunk(datosParagraph, Fecha.getFechaHora(aspelFacturaDAO.FECHAELAB), header2);
         addChunk(datosParagraph, "Fecha Vencimiento: ", header2Bold, 0f);
         addChunk(datosParagraph, Fecha.getFechaHora(aspelFacturaDAO.FECHA_VEN), header2);
-        addChunk(datosParagraph, "Pedido: ", header2Bold, 0f);
+        addChunk(datosParagraph, "Documento SAE: ", header2Bold, 0f);
         addChunk(datosParagraph, aspelPedidoDAO.CVE_DOC, header2);
 
         String indicador = "";
@@ -644,8 +648,9 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
               ||rutaFacturaDAO.serie.compareTo("ENX")==0)
             indicador = "NV";
 
-        addChunk(datosParagraph, "Ruta: ", header0Bold, 0f);
-        addChunk(datosParagraph, ordenSurtidoPedidoDAO.ruta+" "+indicador, header0Bold);
+        addChunk(datosParagraph, "", header2);
+        addChunk(datosParagraph, "Ruta: ", huge0Bold, 0f);
+        addChunk(datosParagraph, ordenSurtidoPedidoDAO.ruta+" "+indicador, huge0Bold);
 
         writeElement(datosParagraph, 300f, 740f, 580f, 655f);
 
@@ -1183,16 +1188,17 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         addChunk(detalleParagraph, F.f(detalleFactura.getClaveProductoServicio(), 20, (short)(F.LJ+F.TR)), 0f);
         addChunk(detalleParagraph, F.f(detalleFactura.getClaveUnidad().toString(), 10, (short)(F.LJ+F.TR)), 0f);
         //descripcionLongitudMaxima es igual a 45;
-        addChunk(detalleParagraph, F.f("P.Publico:", 15, (short)(F.RJ+F.TR)), detalleBold, 0f);
-        addChunk(detalleParagraph, F.f(df.format(detalleFactura.PREPUB), 15, (short)(F.RJ+F.TR)), detalle, 0f);
+        addChunk(detalleParagraph, F.f(detalleFactura.SUSTANCIAACTIVA, 30, (short)(F.LJ+F.TR)), detalleBold, 0f);
+        addChunk(detalleParagraph, F.f("P.Publico:", 10, (short)(F.RJ+F.TR)), detalleBold, 0f);
+        addChunk(detalleParagraph, F.f(df.format(detalleFactura.PREPUB), 12, (short)(F.RJ+F.TR)), detalle, 0f);
 
         InformacionAduaneraCFD informacionAduaneraCFD = detalleFactura.getInformacionAduanera();
         if (informacionAduaneraCFD!=null) {
-            addChunk(detalleParagraph, F.f("Lote:", 10, (short)(F.RJ+F.TR)), detalleBold, 0f);
+            addChunk(detalleParagraph, F.f("Lote:", 5, (short)(F.RJ+F.TR)), detalleBold, 0f);
             addChunk(detalleParagraph, F.f(informacionAduaneraCFD.getLote(), 10, (short)(F.LJ+F.TR)), detalle, 0f);
             Calendar fechaCaducidad = informacionAduaneraCFD.getFechaCaducidad();
             if (fechaCaducidad!=null) {
-                addChunk(detalleParagraph, F.f("Caducidad:", 12, (short)(F.RJ+F.TR)), detalleBold, 0f);
+                addChunk(detalleParagraph, F.f("Caducidad:", 10, (short)(F.RJ+F.TR)), detalleBold, 0f);
                 addChunk(detalleParagraph, F.f(Fecha.getFecha(fechaCaducidad.getTime()), 10, (short)(F.LJ+F.TR)), detalle, 0f);
             }
         }
@@ -1287,10 +1293,10 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
 
         // Contado o Credito
         printHeaderTitle(aspelClienteDAO.DIASCRED==0 ? "DE CONTADO" : "A CRÉDITO",
-                header2Bold, 15f, lineOffset+55f, 200f, lineOffset+70f, Element.ALIGN_LEFT);            
+                header2Bold, 15f, lineOffset+15f, 200f, lineOffset+30f, Element.ALIGN_LEFT);
         printHeaderTitle("* NO SE ACEPTAN DEVOLUCIONES DESPUES DE 7 DIAS DE ENTREGADA LA MERCANCIA",
-                header2Bold, 15f, lineOffset+45f, 400f, lineOffset+60f, Element.ALIGN_LEFT);            
-        
+                header2Bold, 15f, lineOffset+5f, 400f, lineOffset+20f, Element.ALIGN_LEFT);
+
         // Importe con Letra
         /*lineOffset -= 15f;
 
@@ -1308,15 +1314,15 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
 
         writeElement(importeConLetraParagraph, 15f, lineOffset - 10f, 580f, lineOffset+5f);*/
 
-        
+
         // Pagare
         lineOffset -= 10f;
-        
+
         Paragraph pagareParagraph = new Paragraph();
         pagareParagraph.setLeading(10f);
         pagareParagraph.setFont(header);
         pagareParagraph.setAlignment(Element.ALIGN_JUSTIFIED);
-        
+
         Letras letras = new Letras(moneda);
 
         addChunk(pagareParagraph, "Pagare bueno por "+df.format(comprobante.getTotal().doubleValue())+" En la Ciudad de México a "+Fecha.getFecha(aspelFacturaDAO.FECHAELAB)
@@ -1325,7 +1331,7 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
                 +"El suscriptor pagará a la vista intereses ordinarios mensuales a partir del día "+Fecha.getFecha(aspelFacturaDAO.FECHA_VEN)+" a razón del 5% "
                 +"en caso de que el suscriptor no pague en la fecha de vencimiento la totalidad del saldo, ni cualquier pago de intereses ordinarios "
                 +"se pagaran intereses moratorios a razón del 5% mensual.");
-        
+
         writeElement(pagareParagraph, 15f, lineOffset - 50f, 580f, lineOffset+5f);
 
         // Firmas
@@ -1335,30 +1341,30 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         firma1Paragraph.setLeading(10f);
         firma1Paragraph.setFont(header);
         firma1Paragraph.setAlignment(Element.ALIGN_CENTER);
-        
+
         addChunk(firma1Paragraph, "__________________________________");
         addChunk(firma1Paragraph, aspelClienteDAO.NOMBRE);
-        
+
         writeElement(firma1Paragraph, 15f, lineOffset - 70f, 190f, lineOffset+5f);
-        
+
         Paragraph firma2Paragraph = new Paragraph();
         firma2Paragraph.setLeading(10f);
         firma2Paragraph.setFont(header);
         firma2Paragraph.setAlignment(Element.ALIGN_CENTER);
-        
+
         addChunk(firma2Paragraph, "__________________________________");
         addChunk(firma2Paragraph, "Firma de la persona que suscribe el pagare");
-        
+
         writeElement(firma2Paragraph, 190f, lineOffset - 70f, 380f, lineOffset+5f);
 
         Paragraph firma3Paragraph = new Paragraph();
         firma3Paragraph.setLeading(10f);
         firma3Paragraph.setFont(header);
         firma3Paragraph.setAlignment(Element.ALIGN_CENTER);
-        
+
         addChunk(firma3Paragraph, "__________________________________");
         addChunk(firma3Paragraph, "Nombre completo, domicilio y firma del aval");
-        
+
         writeElement(firma3Paragraph, 390f, lineOffset - 70f, 580f, lineOffset+5f);
 
     }

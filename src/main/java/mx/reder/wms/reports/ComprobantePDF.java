@@ -3,6 +3,7 @@ package mx.reder.wms.reports;
 import com.atcloud.dao.engine.DatabaseServices;
 import com.atcloud.util.CommonServices;
 import com.atcloud.web.WebException;
+import java.io.File;
 import java.util.ArrayList;
 import mx.gob.sat.cartaPorte20.CartaPorteDocument;
 import mx.gob.sat.cfd.x4.ComprobanteDocument;
@@ -17,6 +18,7 @@ import mx.reder.wms.dao.entity.OrdenSurtidoPedidoDAO;
 import mx.reder.wms.dao.entity.RutaCfdiDAO;
 import mx.reder.wms.dao.entity.RutaFacturaDAO;
 import mx.reder.wms.to.ASPELFacturaDetalleTO;
+import mx.reder.wms.util.Configuracion;
 import org.apache.log4j.Logger;
 
 /**
@@ -27,11 +29,6 @@ public class ComprobantePDF {
     static Logger log = Logger.getLogger(ComprobantePDF.class.getName());
 
     private CommonServices cs = new CommonServices();
-    private String path = null;
-
-    public void setContextPath(String path) {
-        this.path = path;
-    }
 
     public byte[] pdf(DatabaseServices ds, RutaCfdiDAO rutaCfdiDAO, RutaFacturaDAO rutaFacturaDAO, OrdenSurtidoPedidoDAO ordenSurtidoPedidoDAO,
             ASPELPedidoDAO aspelPedidoDAO, ASPELVendedorDAO aspelVendedorDAO, ASPELFacturaDAO aspelFacturaDAO, ASPELClienteDAO aspelClienteDAO,
@@ -128,17 +125,35 @@ public class ComprobantePDF {
         //
         //
         //
-        String fontPath = path==null ? null : path+"assets/fonts/Tahoma.ttf";
-
         log.debug("Generando el PDF ... ");
         PDFFactory pdfFactory = new PDFFactoryFacturaImp();
-        pdfFactory.setup(fontPath);
+        pdfFactory.setup(getFontPath(), getLogoPath());
         byte[] pdf = pdfFactory.genera(ds, cd, tfd, cpd, pd, rutaCfdiDAO.cadenaoriginal, rutaCfdiDAO.qr,
                 rutaFacturaDAO, ordenSurtidoPedidoDAO, aspelPedidoDAO, aspelVendedorDAO, aspelFacturaDAO, aspelClienteDAO, aspelInformacionEnvioDAO,
                 detalles);
         pdfFactory.terminate();
 
         return pdf;
+    }
+
+    private String getFontPath() {
+        String rutaFont = Configuracion.getInstance().getProperty("ruta.font");
+        if (rutaFont==null)
+            return null;
+        File fileFont = new File(rutaFont);
+        if (fileFont.exists())
+            return fileFont.getAbsolutePath();
+        return null;
+    }
+
+    private String getLogoPath() {
+        String rutaLogo = Configuracion.getInstance().getProperty("ruta.logo");
+        if (rutaLogo==null)
+            return null;
+        File fileLogo = new File(rutaLogo);
+        if (fileLogo.exists())
+            return fileLogo.getAbsolutePath();
+        return null;
     }
 
     public static String xmlEntities(String value) {

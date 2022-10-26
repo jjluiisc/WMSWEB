@@ -65,6 +65,7 @@ public class ASPELFacturaDetalleTO implements ConceptoCFD {
     public String DESCR = null;
     public String UNI_MED = null;
     public Double PREPUB = null;
+    public String SUSTANCIAACTIVA = null;
 
     private InformacionAduaneraCFD informacionAduanera;
 

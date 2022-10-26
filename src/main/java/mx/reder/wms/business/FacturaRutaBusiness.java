@@ -56,6 +56,7 @@ import mx.reder.wms.to.ASPELFacturaDetalleTO;
 import mx.reder.wms.to.ASPELFacturaDetallePedimentoTO;
 import mx.reder.wms.to.FacturaRutaResponse;
 import mx.reder.wms.to.LotePedimentoTO;
+import mx.reder.wms.util.Configuracion;
 import mx.reder.wms.util.Constantes;
 import org.apache.log4j.Logger;
 
@@ -533,7 +534,7 @@ public class FacturaRutaBusiness {
                 +"pf.COMI, pf.APAR, pf.ACT_INV, pf.NUM_ALM, pf.POLIT_APLI, pf.TIP_CAM, pf.UNI_VENTA, pf.TIPO_PROD, pf.CVE_OBS, pf.REG_SERIE, pf.E_LTPD,"
                 +"pf.TIPO_ELEM, pf.NUM_MOV, pf.TOT_PARTIDA, pf.IMPRIMIR, pf.MAN_IEPS, pf.APL_MAN_IMP, pf.CUOTA_IEPS, pf.APL_MAN_IEPS, pf.MTO_PORC,"
                 +"pf.MTO_CUOTA, pf.CVE_ESQ, pf.DESCR_ART, pf.UUID, pf.VERSION_SINC, p.CVE_PRODSERV, p.CVE_UNIDAD, p.DESCR, p.UNI_MED, "
-                +"COALESCE(pl.CAMPLIB5, 0) AS PREPUB "
+                +"COALESCE(pl.CAMPLIB5, 0) AS PREPUB, pl.CAMPLIB7 AS SUSTANCIAACTIVA "
                 +"FROM PAR_FACTF"+rutaFacturaDAO.compania+" pf LEFT JOIN INVE"+rutaFacturaDAO.compania+" p ON pf.CVE_ART = p.CVE_ART "
                 +"LEFT JOIN INVE_CLIB"+rutaFacturaDAO.compania+" pl ON pf.CVE_ART = pl.CVE_PROD "
                 +"WHERE pf.CVE_DOC = '"+aspelFacturaDAO.CVE_DOC+"'");
@@ -593,17 +594,7 @@ public class FacturaRutaBusiness {
 
         //if (companiaDAO.diferenciahoraria!=0)
         //    documentoCFD.fecha = Fecha.addDate(documentoCFD.fecha, Calendar.HOUR, companiaDAO.diferenciahoraria);
-        //
-        //
-        //
-        //receptorCFD.usoCFDI = "G01";
-        //receptorCFD.metodoDePago = "PPD";
-        //receptorCFD.formaDePago = "99";
-        //receptorCFD.rfc = "GNE130422S71";
-        //receptorCFD.nombre = "GNEW";
-        //receptorCFD.regimenFiscal = "601";
-        //receptorCFD.codigoPostal = "06700";
-        
+
         if (aspelClienteDAO.RFC.compareTo("XAXX010101000")==0){
             receptorCFD.usoCFDI = "S01";
             receptorCFD.regimenFiscal = "616";
@@ -611,18 +602,15 @@ public class FacturaRutaBusiness {
             receptorCFD.rfc = "XAXX010101000";
             receptorCFD.codigoPostal = direccionDAO.codigopostal;
         }
-        //
-        //
-        //
 
         ComprobanteCFD comprobanteCFDImp = new ComprobanteCFDImp(companiaDAO, direccionDAO, documentoCFD,
                 receptorCFD, receptorCFD, receptorCFD, detalles, null, null);
 
         //TimbradoCFD timbradoCFDImp = TimbradoFactory.getInstance().makeTimbradoCFD(ds, companiaDAO.compania);
         HashMap<String, String> propiedades = new HashMap<>();
-        propiedades.put("url", "http://services.test.sw.com.mx");
-        propiedades.put("usuario", "joelbecerram@gmail.com");
-        propiedades.put("password", "CRC+SW");
+        propiedades.put("url", Configuracion.getInstance().getProperty(companiaDAO.compania+".timbrado.url"));
+        propiedades.put("usuario", Configuracion.getInstance().getProperty(companiaDAO.compania+".timbrado.usuario"));
+        propiedades.put("password", Configuracion.getInstance().getProperty(companiaDAO.compania+".timbrado.password"));
         TimbradoCFD timbradoCFDImp = new TimbradoSWCFDImp(propiedades);
 
         String fecha = Fecha.getFechaHora(documentoCFD.getFecha());
@@ -1365,11 +1353,11 @@ public class FacturaRutaBusiness {
                 break;
             serie.append(c);
         }
-        String _serie = serie.toString();        
+        String _serie = serie.toString();
         if (_serie.compareTo("F")==0)
             return "BG";
         else if (_serie.compareTo("N")==0)
-            return "NN";  
+            return "NN";
         else
             return _serie;
     }
