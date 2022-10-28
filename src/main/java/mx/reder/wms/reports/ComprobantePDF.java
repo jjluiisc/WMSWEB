@@ -122,6 +122,23 @@ public class ComprobantePDF {
         *
         */
 
+        String indicador = "";
+        if (rutaFacturaDAO.serie==null||rutaFacturaDAO.serie.isEmpty())
+            indicador = "";
+        else if (rutaFacturaDAO.serie.compareTo("BG")==0
+              ||rutaFacturaDAO.serie.compareTo("BO")==0
+              ||rutaFacturaDAO.serie.compareTo("BX")==0
+              ||rutaFacturaDAO.serie.compareTo("EFX")==0
+              ||rutaFacturaDAO.serie.compareTo("EFO")==0
+              ||rutaFacturaDAO.serie.compareTo("FO")==0)
+            indicador = "FA";
+        else if (rutaFacturaDAO.serie.compareTo("NN")==0
+              ||rutaFacturaDAO.serie.compareTo("NO")==0
+              ||rutaFacturaDAO.serie.compareTo("NX")==0
+              ||rutaFacturaDAO.serie.compareTo("ENO")==0
+              ||rutaFacturaDAO.serie.compareTo("ENX")==0)
+            indicador = "NV";
+
         //
         //
         //
@@ -129,7 +146,7 @@ public class ComprobantePDF {
         PDFFactory pdfFactory = new PDFFactoryFacturaImp();
         pdfFactory.setup(getFontPath(), getLogoPath());
         byte[] pdf = pdfFactory.genera(ds, cd, tfd, cpd, pd, rutaCfdiDAO.cadenaoriginal, rutaCfdiDAO.qr,
-                rutaFacturaDAO, ordenSurtidoPedidoDAO, aspelPedidoDAO, aspelVendedorDAO, aspelFacturaDAO, aspelClienteDAO, aspelInformacionEnvioDAO,
+                indicador, rutaFacturaDAO, ordenSurtidoPedidoDAO, aspelPedidoDAO, aspelVendedorDAO, aspelFacturaDAO, aspelClienteDAO, aspelInformacionEnvioDAO,
                 detalles);
         pdfFactory.terminate();
 

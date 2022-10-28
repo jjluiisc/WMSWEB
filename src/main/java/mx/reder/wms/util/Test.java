@@ -202,7 +202,7 @@ public class Test {
 
             request.setParameter("usuario", "joelbecerram@gmail.com");
             request.setParameter("compania", "01");
-            request.setParameter("idruta", paqueteDocumental);
+            request.setParameter("ruta", paqueteDocumental);
 
             try {
                 PaqueteDocumentalCommand command = new PaqueteDocumentalCommand();

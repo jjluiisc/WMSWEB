@@ -60,9 +60,11 @@ import org.apache.log4j.Logger;
 public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFactory {
     static Logger log = Logger.getLogger(PDFFactoryFacturaImp.class.getName());
 
+    // <editor-fold defaultstate="collapsed" desc="variables Click on the+sign on the left to edit the code.">
     private DatabaseServices ds = null;
     private String cadenaOriginal = null;
     private String qr = null;
+    private String indicador = null;
     private String logoPath = null;
     public BaseFont baseFont = null;
     public BaseFont baseFontImp = null;
@@ -101,7 +103,9 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
     private ASPELClienteDAO aspelClienteDAO;
     private ASPELInformacionEnvioDAO aspelInformacionEnvioDAO;
     private ArrayList<ASPELFacturaDetalleTO> detallesFactura;
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="setup() Click on the+sign on the left to edit the code.">
     @Override
     public void setup(String fontPath, String logoPath) throws Exception {
         log.info("Iniciando PDFFactory ...");
@@ -132,20 +136,25 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
 
         log.info("Listo");
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="terminate() Click on the+sign on the left to edit the code.">
     @Override
     public void terminate() {
         log.info("Fin");
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="genera() Click on the+sign on the left to edit the code.">
     @Override
     public byte[] genera(DatabaseServices ds, ComprobanteDocument cd, TimbreFiscalDigitalDocument tfd, CartaPorteDocument cpd, PagosDocument pd,
-            String cadenaOriginal, String qr, RutaFacturaDAO rutaFacturaDAO, OrdenSurtidoPedidoDAO ordenSurtidoPedidoDAO,
+            String cadenaOriginal, String qr, String indicador, RutaFacturaDAO rutaFacturaDAO, OrdenSurtidoPedidoDAO ordenSurtidoPedidoDAO,
             ASPELPedidoDAO aspelPedidoDAO, ASPELVendedorDAO aspelVendedorDAO, ASPELFacturaDAO aspelFacturaDAO, ASPELClienteDAO aspelClienteDAO,
             ASPELInformacionEnvioDAO aspelInformacionEnvioDAO, ArrayList<ASPELFacturaDetalleTO> detallesFactura) throws Exception {
         this.ds = ds;
         this.cadenaOriginal = cadenaOriginal;
         this.qr = qr;
+        this.indicador = indicador;
 
         this.rutaFacturaDAO = rutaFacturaDAO;
         this.ordenSurtidoPedidoDAO = ordenSurtidoPedidoDAO;
@@ -279,6 +288,7 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
 
         return out.toByteArray();
     }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="resize, write, draw, addChunk, printHeader methods. Click on the+sign on the left to edit the code.">
 
@@ -499,6 +509,7 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
 
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="printHeader() Click on the+sign on the left to edit the code.">
     public void printHeader(Comprobante comprobante, TimbreFiscalDigital timbreFiscal) throws Exception {
         paginaNumero++;
         lineOffset = lineOffsetPagina;
@@ -521,11 +532,11 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
                 tipoComprobante = "Pago";
                 break;
         }
-        
+
         // Logo
         if (logoPath!=null) {
             Image logoImage = Image.getInstance(logoPath);
-            writeElement(logoImage, 15f, 820f, 95f, 765f); 
+            writeElement(logoImage, 15f, 820f, 95f, 765f);
         }
 
         // Emisor
@@ -538,16 +549,22 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         Emisor emisor = comprobante.getEmisor();
         addChunk(emisorParagraph, nullText(emisor.getNombre()), headerBold);
         addChunk(emisorParagraph, nullText(emisor.getRfc()), headerBold);
-        addChunk(emisorParagraph, "Regimen Fiscal: ", header2Bold, 0f);
-        addChunk(emisorParagraph, regimenFiscal, header2);
-        addChunk(emisorParagraph, "Numero de certificado: ", header2Bold, 0f);
-        addChunk(emisorParagraph, comprobante.getNoCertificado(), header2);
+        if (indicador.compareTo("NV")!=0) {
+            addChunk(emisorParagraph, "Regimen Fiscal: ", header2Bold, 0f);
+            addChunk(emisorParagraph, regimenFiscal, header2);
+            addChunk(emisorParagraph, "Numero de certificado: ", header2Bold, 0f);
+            addChunk(emisorParagraph, comprobante.getNoCertificado(), header2);
+        }
 
         writeElement(emisorParagraph, 100f, 820f, 300f, 765f);
 
         // Comprobante
         drawRectangleStroke(300f, 805f, 580f, 820f, clearGray, clearGray);
-        printHeaderTitle("CFDI de "+tipoComprobante, headerBold, 300f, 800f, 580f, 810f, Element.ALIGN_CENTER);
+        if (indicador.compareTo("NV")==0) {
+            printHeaderTitle("Nota de Venta", headerBold, 300f, 800f, 580f, 810f, Element.ALIGN_CENTER);
+        } else {
+            printHeaderTitle("CFDI de "+tipoComprobante, headerBold, 300f, 800f, 580f, 810f, Element.ALIGN_CENTER);
+        }
 
         Paragraph comprobanteParagraph = new Paragraph();
         comprobanteParagraph.setLeading(10f);
@@ -556,8 +573,10 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         addChunk(comprobanteParagraph, "Serie y Folio: ", header2Bold, 0f);
         addChunk(comprobanteParagraph, nullText(comprobante.getSerie())+" "
                +nullText(comprobante.getFolio()), header2);
-        addChunk(comprobanteParagraph, "Lugar de expedición: ", header2Bold, 0f);
-        addChunk(comprobanteParagraph, comprobante.getLugarExpedicion(), header2);
+        if (indicador.compareTo("NV")!=0) {
+            addChunk(comprobanteParagraph, "Lugar de expedición: ", header2Bold, 0f);
+            addChunk(comprobanteParagraph, comprobante.getLugarExpedicion(), header2);
+        }
         addChunk(comprobanteParagraph, "Fecha y hora de emisión: ", header2Bold, 0f);
         addChunk(comprobanteParagraph, Fecha.getFechaHora(comprobante.getFecha().getTime()), header2);
 
@@ -632,22 +651,6 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         addChunk(datosParagraph, "Documento SAE: ", header2Bold, 0f);
         addChunk(datosParagraph, aspelPedidoDAO.CVE_DOC, header2);
 
-        String indicador = "";
-        if (rutaFacturaDAO.serie==null||rutaFacturaDAO.serie.isEmpty())
-            indicador = "";
-        else if (rutaFacturaDAO.serie.compareTo("BG")==0
-              ||rutaFacturaDAO.serie.compareTo("BO")==0
-              ||rutaFacturaDAO.serie.compareTo("BX")==0
-              ||rutaFacturaDAO.serie.compareTo("EFX")==0
-              ||rutaFacturaDAO.serie.compareTo("EFO")==0)
-            indicador = "FA";
-        else if (rutaFacturaDAO.serie.compareTo("NN")==0
-              ||rutaFacturaDAO.serie.compareTo("NO")==0
-              ||rutaFacturaDAO.serie.compareTo("NX")==0
-              ||rutaFacturaDAO.serie.compareTo("ENO")==0
-              ||rutaFacturaDAO.serie.compareTo("ENX")==0)
-            indicador = "NV";
-
         addChunk(datosParagraph, "", header2);
         addChunk(datosParagraph, "Ruta: ", huge0Bold, 0f);
         addChunk(datosParagraph, ordenSurtidoPedidoDAO.ruta+" "+indicador, huge0Bold);
@@ -676,7 +679,9 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         drawRectangleStroke(520f, 650f, 580f, 665f, clearGray, clearGray);
         printHeaderTitle("Descuento", header2Bold, 520f, 645f, 580f, 655f, Element.ALIGN_CENTER);
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="printPagos() Click on the+sign on the left to edit the code.">
     public void printPagos(Comprobante comprobante, TimbreFiscalDigital timbreFiscal, Pagos pagos) throws Exception {
         lineOffset -= 10f;
 
@@ -851,7 +856,9 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
             }
         }
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="printCartaPorte() Click on the+sign on the left to edit the code.">
     public void printCartaPorte(Comprobante comprobante, TimbreFiscalDigital timbreFiscal, CartaPorte cartaPorte) throws Exception {
         lineOffset -= 10f;
 
@@ -1126,7 +1133,9 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
 
         lineOffset -= 20f;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="printDetalle() Click on the+sign on the left to edit the code.">
     public void printDetalle(Comprobante comprobante, TimbreFiscalDigital timbreFiscal, CartaPorte cartaPorte, ASPELFacturaDetalleTO detalleFactura) throws Exception {
         detalleNo++;
         DecimalFormat df = new DecimalFormat("$#,##0.00");
@@ -1232,7 +1241,9 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         // Divisor
         drawRectangleStroke(15f, lineOffset, 580f, lineOffset, clearGray);
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="printTotales() Click on the+sign on the left to edit the code.">
     public void printTotales(Comprobante comprobante, TimbreFiscalDigital timbreFiscal) throws Exception {
         if (lineOffset - 100f < footerOffset) {
             printPaginaNueva(comprobante, timbreFiscal);
@@ -1368,7 +1379,9 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         writeElement(firma3Paragraph, 390f, lineOffset - 70f, 580f, lineOffset+5f);
 
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="printCfdiRelacionados() Click on the+sign on the left to edit the code.">
     public void printCfdiRelacionados(Comprobante comprobante) throws Exception {
         CfdiRelacionados[] cfdiRelacionados = comprobante.getCfdiRelacionadosArray();
         if (cfdiRelacionados==null||cfdiRelacionados.length==0)
@@ -1397,7 +1410,9 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
             }
         }
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="printPaginaNueva() Click on the+sign on the left to edit the code.">
     public void printPaginaNueva(Comprobante comprobante, TimbreFiscalDigital timbreFiscal) throws Exception {
         // Pie de Pagina
         printFooter();
@@ -1409,7 +1424,9 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         // Header
         printHeader(comprobante, timbreFiscal);
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="printFooter() Click on the+sign on the left to edit the code.">
     public void printFooter() throws Exception {
         // Pagina
         Paragraph paginaParagraph = new Paragraph();
@@ -1421,16 +1438,32 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
 
         printLeyenda();
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="printLeyenda() Click on the+sign on the left to edit the code.">
     public void printLeyenda() throws Exception {
+        //
+        // En NV no se imprime nada de esto
+        //
+        if (indicador.compareTo("NV")==0)
+            return;
+        
         // Leyenda CFD
         Paragraph leyendaCFDParagraph = new Paragraph();
         addChunk(leyendaCFDParagraph, "ESTE DOCUMENTO ES UNA REPRESENTACION IMPRESA DE UN CFDI.", header2Bold);
 
         writeElement(leyendaCFDParagraph, 300f, 30f, 574f, 10f);
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="printSelloYCadenaOriginal() Click on the+sign on the left to edit the code.">
     public void printSelloYCadenaOriginal(Comprobante comprobante, TimbreFiscalDigital timbreFiscal) throws Exception {
+        //
+        // En NV no se imprime nada de esto
+        //
+        if (indicador.compareTo("NV")==0)
+            return;
+        
         // Divisor
         drawRectangleStroke(15f, 155f, 580f, 154f, clearGray);
 
@@ -1495,7 +1528,9 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         // QR
         generaQR(qr);
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="generaQR() Click on the+sign on the left to edit the code.">
     public void generaQR(String data) throws Exception {
         int qr_image_width = 115;
         int qr_image_height = 115;
@@ -1523,6 +1558,7 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
 
         writeElement(qrImage, 5f, 150f, 120f, 35f);
     }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="nullText, split methods. Click on the+sign on the left to edit the code.">
     public String nullText(Object texto) {

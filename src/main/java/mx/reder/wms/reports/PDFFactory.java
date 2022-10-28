@@ -18,7 +18,7 @@ import mx.reder.wms.to.ASPELFacturaDetalleTO;
 public interface PDFFactory {
     public void setup(String fontPath, String logoPath) throws Exception;
     public byte[] genera(DatabaseServices ds, ComprobanteDocument cd, TimbreFiscalDigitalDocument tfd, CartaPorteDocument cpd, PagosDocument pd,
-            String cadenaOriginal, String qr, RutaFacturaDAO rutaFacturaDAO, OrdenSurtidoPedidoDAO ordenSurtidoPedidoDAO, 
+            String cadenaOriginal, String qr, String indicador, RutaFacturaDAO rutaFacturaDAO, OrdenSurtidoPedidoDAO ordenSurtidoPedidoDAO,
             ASPELPedidoDAO aspelPedidoDAO, ASPELVendedorDAO aspelVendedorDAO, ASPELFacturaDAO aspelFacturaDAO, ASPELClienteDAO aspelClienteDAO,
             ASPELInformacionEnvioDAO aspelInformacionEnvioDAO, ArrayList<ASPELFacturaDetalleTO> detallesFactura) throws Exception;
     public void terminate();
