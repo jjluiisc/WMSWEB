@@ -234,4 +234,20 @@
             <query-column no="02" value-of="2"/>
         </query>
     </response>
+    <!--
+    - contenedores
+    -->
+    <response name="contenedores">
+        <param name="compania"/>
+        <param name="usuario"/>
+        
+        <query sql="
+            SELECT DISTINCT contenedor, flsurtido 
+            FROM OrdenSurtidoPedidoContenedor
+            WHERE compania = '${compania}'"
+            column-separator="|">
+            <query-column no="01" value-of="1"/>
+            <query-column no="02" value-of="2"/>
+        </query>
+    </response>
 </responses>
