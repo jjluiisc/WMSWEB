@@ -12,12 +12,14 @@ import com.atcloud.util.Fecha;
 import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
+import mx.reder.wms.business.CartaPorteBusiness;
 import mx.reder.wms.cfdi.EncriptacionFacade;
 import mx.reder.wms.command.FacturaRutaCommand;
 import mx.reder.wms.command.PaqueteDocumentalCommand;
 import mx.reder.wms.dao.engine.DatabaseDataSource;
 import mx.reder.wms.dao.entity.CertificadoSelloDigitalDAO;
 import mx.reder.wms.reports.ReporteadorImp;
+import mx.reder.wms.to.RutaFacturaCartaPorteTO;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -33,6 +35,7 @@ public class Test {
     private String ruta = null;
     private String paqueteDocumental = null;
     private String validaCSD = null;
+    private String cartaPorte = null;
 
     private void parseArgs(String[] args) {
         for(int i=0; i<args.length; i++) {
@@ -51,6 +54,8 @@ public class Test {
                 paqueteDocumental = args[i+1];
             if (arg.compareTo("--valida-csd")==0)
                 validaCSD = args[i+1];
+            if (arg.compareTo("--carta-porte")==0)
+                cartaPorte = args[i+1];
         }
     }
 
@@ -210,6 +215,44 @@ public class Test {
             } catch(Exception e) {
                 log.error(e.getMessage(), e);
             } finally {
+                connection.close();
+            }
+        }
+        if (cartaPorte!=null) {
+            CommonServices cs = new CommonServices();
+            Connection connection = cs.getConnection("reder");
+            DatabaseServices ds = new DatabaseServices(connection);
+
+            Connection connectionA = cs.getConnection("REDER");
+            DatabaseServices dsA = new DatabaseServices(connectionA);
+
+            try {
+                CartaPorteBusiness bussines = new CartaPorteBusiness();
+                bussines.setDatabaseServices(ds);
+                bussines.setDatabaseAspelServices(dsA);
+
+                ArrayList<RutaFacturaCartaPorteTO> facturas = new ArrayList<>();
+
+                RutaFacturaCartaPorteTO factura1 = new RutaFacturaCartaPorteTO();
+                factura1.compania = "01";
+                factura1.flsurtido = 664;
+                factura1.fechahorallegada = Fecha.getFechaHora("2022-11-09 15:10:00");
+                factura1.distanciarecorrida = 20.0d;
+                facturas.add(factura1);
+
+                RutaFacturaCartaPorteTO factura2 = new RutaFacturaCartaPorteTO();
+                factura2.compania = "01";
+                factura2.flsurtido = 665;
+                factura2.fechahorallegada = Fecha.getFechaHora("2022-11-10 22:45:00");
+                factura2.distanciarecorrida = 65.0d;
+                facturas.add(factura2);
+
+                bussines.cartaPorte("01", "    3", "   49", facturas);
+
+            } catch(Exception e) {
+                log.error(e.getMessage(), e);
+            } finally {
+                connectionA.close();
                 connection.close();
             }
         }

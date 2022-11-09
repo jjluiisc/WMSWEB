@@ -487,3 +487,69 @@ function paqueteDocumentalRutaConfirmado(ruta) {
     notify_secondary("Paquete Documental de Ruta ...");
     mvc(data, onComplete, onFail, onError);
 }
+
+function cerrarRuta() {
+    var $ruta = $("#ruta-datos [name=ruta]");
+
+    var aceptarII = function() {
+        $ruta.select();
+        $ruta.focus();
+    };
+
+    var ruta = $ruta.val();
+    if (ruta==="") {
+        mensaje("Para cerrar una Ruta, debe de tener un valor en la Ruta.", aceptarII);
+        return;
+    }
+
+    var aceptar = function() {
+        cerrarRutaConfirmado(ruta);
+    };
+    pregunta("&iquest;Realmente desea <b>CERRAR LA RUTA <span class=\"f_size_big\">"+ruta+"</span></b>?<br>"
+        +"&iquest;Esta seguro?", aceptar);
+}
+
+function cerrarRutaConfirmado(ruta) {
+    var $btn = $("#btn-cerrar");
+    $btn.attr("disabled", true);
+
+    var data = {
+        id: "CierraRuta",
+        compania: usuario.compania,
+        usuario: usuario.usuario,
+        ruta: ruta
+    };
+
+    var onAceptar = function() {
+        $btn.removeAttr("disabled");
+    };
+    var onFail = function(err) {
+        var msg = "Error al cerrar la ruta.<br><br><b>("+err.status+") "+err.statusText+"</b>";
+        error(msg, onAceptar);
+        notify_error(msg);
+    };
+    var onError = function(response) {
+        if (response.exception.indexOf("WebException")!==-1) {
+            precaucion(response.mensaje, onAceptar);
+            notify_warning(response.mensaje);
+        } else {
+            error(response.exception, onAceptar);
+            notify_error(response.exception);
+        }
+    };
+    var onComplete = function(response) {
+        onAceptar();
+
+        var aceptar = function() {
+            obtenRutas();
+            detallesRuta();
+        };
+        var msg = "<b>Cierre de Ruta Generado Correctamente.</b>";
+
+        mensaje(msg, aceptar);
+        notify_success(msg);
+    };
+
+    notify_secondary("Cerrando la Ruta ...");
+    mvc(data, onComplete, onFail, onError);
+}

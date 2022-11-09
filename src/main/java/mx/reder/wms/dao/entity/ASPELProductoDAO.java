@@ -56,6 +56,7 @@ public class ASPELProductoDAO implements DatabaseRecord, DatabaseRecordASPEL, ja
     public Date VERSION_SINC_FECHA_IMG = null;
     public String CVE_PRODSERV = null;
     public String CVE_UNIDAD = null;
+    public String MAT_PELI = null;
 
     public ASPELProductoDAO() {
     }

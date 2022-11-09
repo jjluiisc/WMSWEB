@@ -96,6 +96,18 @@
         <class-name>mx.reder.wms.command.PaqueteDocumentalCommand</class-name>
         <content-type>application/json</content-type>
     </command>
+    <command id="CierraRuta" name="Cierra la Ruta">
+        <class-name>mx.reder.wms.command.CierraRutaCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="TipoFigurasTransporte" name="TipoFigurasTransporte">
+        <class-name>mx.reder.wms.command.TipoFigurasTransporteCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    <command id="Autotransportes" name="Autotransportes">
+        <class-name>mx.reder.wms.command.AutotransportesCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
 
     <!-- -->
     <command id="ASPELColeccion" name="Obtiene una Coleccion">

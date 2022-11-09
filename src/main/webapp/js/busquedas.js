@@ -525,6 +525,119 @@ function autoBusquedaSurtidor($surtidor, onComplete, onError) {
     $surtidor.focus();
 }
 
+function autoBusquedaTipoFiguraTransporte($figuratransporte, onComplete, onError) {
+    var data = function(value, ondata) {
+        value = value.toUpperCase();
+        var onAceptar = function(err) {
+            $figuratransporte.select();
+            $figuratransporte.focus();
+        };
+        var onFailII = function(err) {
+            error("Error al obtener la lista de registros.<br><br><b>("+
+                err.status+") "+err.statusText+"</b>");
+        };
+        var onErrorII = function(response) {
+            if (onError) {
+                onError(response);
+            } else {
+                if (response.exception.indexOf("WebException")!==-1) {
+                    precaucion(response.mensaje, onAceptar);
+                    notify_warning(response.mensaje);
+                } else {
+                    error(response.exception, onAceptar);
+                    notify_error(response.exception);
+                }
+            }
+        };
+        var onCompleteII = function(response) {
+            ondata(response);
+        };
+        var data = {
+            id: "TipoFigurasTransporte",
+            compania: usuario.compania,
+            valor: value
+        };
+        mvc(data, onCompleteII, onFailII, onErrorII);
+    };
+    var result = function(record, value) {
+        return record.clave.includes(value)
+            || record.licencia.includes(value)
+            || record.rfc.includes(value)
+            || record.nombre.includes(value);
+    };
+    var render = function(record, value) {
+        return "<table class=\"full_width\"><tr>"
+                +"<td class=\"half_width f_size_medium\">"+replaceAll(record.clave, value, "<strong>"+value+"</strong>")+"</td>"
+                +"<td class=\"half_width f_size_medium\">"+replaceAll(record.licencia, value, "<strong>"+value+"</strong>")+"</td>"
+                +"</tr></table>"
+                +"<table class=\"full_width\"><tr>"
+                +"<td class=\"half_width f_size_medium\">"+replaceAll(record.rfc, value, "<strong>"+value+"</strong>")+"</td>"
+                +"<td class=\"half_width f_size_medium\">"+replaceAll(record.tipofigura, value, "<strong>"+value+"</strong>")+"</td>"
+                +"</tr></table>"
+                +"<span class=\"f_size_large\">"+replaceAllIgnoreCase(record.nombre, value, "<strong>"+value+"</strong>")+"</span>";
+    };
+    var click = function(input, record) {
+        onComplete(record);
+    };
+    autocomplete(3, $figuratransporte[0], data, result, render, click);
+
+    $figuratransporte.focus();
+}
+
+function autoBusquedaAutotransporte($autotransporte, onComplete, onError) {
+    var data = function(value, ondata) {
+        value = value.toUpperCase();
+        var onAceptar = function(err) {
+            $autotransporte.select();
+            $autotransporte.focus();
+        };
+        var onFailII = function(err) {
+            error("Error al obtener la lista de registros.<br><br><b>("+
+                err.status+") "+err.statusText+"</b>");
+        };
+        var onErrorII = function(response) {
+            if (onError) {
+                onError(response);
+            } else {
+                if (response.exception.indexOf("WebException")!==-1) {
+                    precaucion(response.mensaje, onAceptar);
+                    notify_warning(response.mensaje);
+                } else {
+                    error(response.exception, onAceptar);
+                    notify_error(response.exception);
+                }
+            }
+        };
+        var onCompleteII = function(response) {
+            ondata(response);
+        };
+        var data = {
+            id: "Autotransportes",
+            compania: usuario.compania,
+            valor: value
+        };
+        mvc(data, onCompleteII, onFailII, onErrorII);
+    };
+    var result = function(record, value) {
+        return record.clave.includes(value)
+            || record.placa.includes(value)
+            || record.numeropermiso.includes(value);
+    };
+    var render = function(record, value) {
+        return "<table class=\"full_width\"><tr>"
+                +"<td class=\"half_width f_size_medium\">"+replaceAll(record.clave, value, "<strong>"+value+"</strong>")+"</td>"
+                +"<td class=\"half_width f_size_medium\">"+replaceAll(record.placa, value, "<strong>"+value+"</strong>")+"</td>"
+                +"</tr></table>"
+                +"<span class=\"f_size_large\">"+replaceAllIgnoreCase(record.numeropermiso, value, "<strong>"+value+"</strong>")+"</span>";
+    };
+    var click = function(input, record) {
+        onComplete(record);
+    };
+    autocomplete(3, $autotransporte[0], data, result, render, click);
+
+    $autotransporte.focus();
+}
+
 function seleccionaTerminal(onSelected, onCanceled) {
 
     var onComplete = function(response) {

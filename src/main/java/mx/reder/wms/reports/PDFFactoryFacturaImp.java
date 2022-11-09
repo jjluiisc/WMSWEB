@@ -24,6 +24,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,6 +40,7 @@ import mx.gob.sat.cfd.x4.ComprobanteDocument.Comprobante.Receptor;
 import mx.gob.sat.pagos20.PagosDocument;
 import mx.gob.sat.pagos20.PagosDocument.Pagos;
 import mx.gob.sat.pagos20.PagosDocument.Pagos.Pago;
+import mx.gob.sat.sitioInternet.cfd.catalogos.CImpuesto;
 import mx.gob.sat.timbreFiscalDigital.TimbreFiscalDigitalDocument;
 import mx.gob.sat.timbreFiscalDigital.TimbreFiscalDigitalDocument.TimbreFiscalDigital;
 import mx.gob.sat.sitioInternet.cfd.catalogos.CTipoDeComprobante;
@@ -1263,27 +1265,44 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
 
         lineOffset -= 20f;
 
-        // Impuesto
-        if (comprobante.getImpuestos()!=null) {
-            if (comprobante.getImpuestos().getTraslados()!=null) {
-                for (Comprobante.Impuestos.Traslados.Traslado traslado : comprobante.getImpuestos().getTraslados().getTrasladoArray()) {
-                    String tipo = traslado.getImpuesto().toString().compareTo("002")==0 ? "IVA" :
-                            traslado.getImpuesto().toString().compareTo("003")==0 ? "IEPS" : traslado.getImpuesto().toString();
-                    drawRectangleStroke(15f, lineOffset, 580f, lineOffset+20f, colorWhite, colorWhite);
-                    printHeaderTitle(tipo+" Traslado ("+traslado.getTasaOCuota()+") "+F.f(df.format(traslado.getImporte().doubleValue()), 15, (short)(F.TR+F.RJ)),
-                            header0, 15f, lineOffset - 10f, 580f, lineOffset+5f, Element.ALIGN_RIGHT);
-
-                    lineOffset -= 20f;
-                }
+        //
+        // En NV no se imprimen impuestos
+        //
+        if (indicador.compareTo("NV")==0) {
+            ;
+        } else {
+            // Agrego el Impuesto Tasa 0
+            if (comprobante.getImpuestos()==null) {
+                Comprobante.Impuestos impuestos = comprobante.addNewImpuestos();
+                Comprobante.Impuestos.Traslados traslados = impuestos.addNewTraslados();
+                Comprobante.Impuestos.Traslados.Traslado traslado = traslados.addNewTraslado();
+                traslado.setBase(BigDecimal.ZERO);
+                traslado.setImpuesto(CImpuesto.X_002);
+                traslado.setTasaOCuota(BigDecimal.ZERO);
+                traslado.setImporte(BigDecimal.ZERO);
             }
-            if (comprobante.getImpuestos().getRetenciones()!=null) {
-                for (Comprobante.Impuestos.Retenciones.Retencion retencion : comprobante.getImpuestos().getRetenciones().getRetencionArray()) {
-                    String tipo = retencion.getImpuesto().toString();
-                    drawRectangleStroke(15f, lineOffset, 580f, lineOffset+20f, colorWhite, colorWhite);
-                    printHeaderTitle(tipo+" Retencion "+F.f(df.format(retencion.getImporte().doubleValue()), 15, (short)(F.TR+F.RJ)),
-                            header0, 15f, lineOffset - 10f, 580f, lineOffset+5f, Element.ALIGN_RIGHT);
+            // Impuesto
+            if (comprobante.getImpuestos()!=null) {
+                if (comprobante.getImpuestos().getTraslados()!=null) {
+                    for (Comprobante.Impuestos.Traslados.Traslado traslado : comprobante.getImpuestos().getTraslados().getTrasladoArray()) {
+                        String tipo = traslado.getImpuesto().toString().compareTo("002")==0 ? "IVA" :
+                                traslado.getImpuesto().toString().compareTo("003")==0 ? "IEPS" : traslado.getImpuesto().toString();
+                        drawRectangleStroke(15f, lineOffset, 580f, lineOffset+20f, colorWhite, colorWhite);
+                        printHeaderTitle(tipo+" Traslado ("+traslado.getTasaOCuota()+") "+F.f(df.format(traslado.getImporte().doubleValue()), 15, (short)(F.TR+F.RJ)),
+                                header0, 15f, lineOffset - 10f, 580f, lineOffset+5f, Element.ALIGN_RIGHT);
 
-                    lineOffset -= 20f;
+                        lineOffset -= 20f;
+                    }
+                }
+                if (comprobante.getImpuestos().getRetenciones()!=null) {
+                    for (Comprobante.Impuestos.Retenciones.Retencion retencion : comprobante.getImpuestos().getRetenciones().getRetencionArray()) {
+                        String tipo = retencion.getImpuesto().toString();
+                        drawRectangleStroke(15f, lineOffset, 580f, lineOffset+20f, colorWhite, colorWhite);
+                        printHeaderTitle(tipo+" Retencion "+F.f(df.format(retencion.getImporte().doubleValue()), 15, (short)(F.TR+F.RJ)),
+                                header0, 15f, lineOffset - 10f, 580f, lineOffset+5f, Element.ALIGN_RIGHT);
+
+                        lineOffset -= 20f;
+                    }
                 }
             }
         }
@@ -1447,7 +1466,7 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         //
         if (indicador.compareTo("NV")==0)
             return;
-        
+
         // Leyenda CFD
         Paragraph leyendaCFDParagraph = new Paragraph();
         addChunk(leyendaCFDParagraph, "ESTE DOCUMENTO ES UNA REPRESENTACION IMPRESA DE UN CFDI.", header2Bold);
@@ -1463,7 +1482,7 @@ public class PDFFactoryFacturaImp extends PdfPageEventHelper implements PDFFacto
         //
         if (indicador.compareTo("NV")==0)
             return;
-        
+
         // Divisor
         drawRectangleStroke(15f, 155f, 580f, 154f, clearGray);
 

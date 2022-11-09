@@ -402,6 +402,29 @@ function _rutas() {
     loadMainPage("/wms/view/almacen/rutas.html", onComplete);
 }
 
+function cartaPorte() {
+    var state = {
+        func: "_cartaPorte"
+    };
+    pushState(state);
+
+    _cartaPorte();
+}
+
+function _cartaPorte() {
+    if (!validaPermiso("cartaPorte"))
+        return false;
+
+    function onComplete() {
+        function onCompleteII() {
+            initCaptura();
+        };
+        loadScript("/wms/js/view/almacen/cartaporte.js", onCompleteII);
+    };
+
+    loadMainPage("/wms/view/almacen/cartaporte.html", onComplete);
+}
+
 function capturaInventario() {
     var state = {
         func: "_capturaInventario"

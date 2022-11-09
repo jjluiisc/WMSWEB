@@ -952,11 +952,22 @@ function autocomplete(min, inp, data, result, render, onclick) {
             return false;
         }
         /*seek on ENTER*/
-        if (k===13) {
+        else if (k===13) {
             if (arr.length===0) {
                 var val = inp.value;
                 if (val==="")
                     return;
+                arr = [];
+                closeAllLists();
+                seekRecords(val);
+            }
+            e.preventDefault();
+            return false;
+        }
+        /*seek ALL on HOME*/
+        else if (k===36) {
+            if (arr.length===0) {
+                var val = inp.value;
                 arr = [];
                 closeAllLists();
                 seekRecords(val);

@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import mx.reder.wms.cfdi.entity.InformacionAduaneraCFD;
 import mx.reder.wms.dao.entity.ASPELClienteDAO;
 import mx.reder.wms.dao.entity.ASPELFacturaDAO;
@@ -49,7 +50,7 @@ public class PaqueteDocumentalBusiness {
 
     public File paqueteDocumental(String compania, String usuario, String ruta) throws Exception {
         RutaDAO rutaDAO = (RutaDAO)ds.first(new RutaDAO(), "compania = '"+compania+"' AND ruta = '"+ruta+"' AND status = 'FA' AND fechacierre IS NULL", "id DESC");
-        if (ruta==null)
+        if (rutaDAO==null)
             throw new WebException("No encontre esta Ruta ["+compania+";"+ruta+"] con estado FA y fechacierre IS NULL");
 
         ArrayList<RutaFacturaDAO> facturas = ds.select(new RutaFacturaDAO(), "idruta = "+rutaDAO.id+" AND status = 'FA'", "parada, flsurtido");
@@ -119,7 +120,7 @@ public class PaqueteDocumentalBusiness {
                 aspelInformacionEnvioDAO.setEmpresa(rutaFacturaDAO.compania);
                 aspelInformacionEnvioDAO.CVE_INFO = aspelFacturaDAO.DAT_ENVIO;
                 if (!dsA.exists(aspelInformacionEnvioDAO))
-                    throw new WebException("No existe esta Informacion de Envio ["+aspelInformacionEnvioDAO+"]");
+                    log.error("No existe esta Informacion de Envio ["+aspelInformacionEnvioDAO+"]");
 
                 ArrayList<ASPELFacturaDetalleTO> detallesFactura = dsA.collection(new ASPELFacturaDetalleTO(),
                         "SELECT pf.CVE_DOC, pf.NUM_PAR, pf.CVE_ART, pf.CANT, pf.PXS, pf.PREC, pf.COST, pf.IMPU1, pf.IMPU2, pf.IMPU3, pf.IMPU4,"
@@ -186,6 +187,10 @@ public class PaqueteDocumentalBusiness {
         FileOutputStream fos = new FileOutputStream(filePD);
         fos.write(bytesPdf);
         fos.close();
+
+        // Fecha Paquete Documental
+        rutaDAO.fechapaquetedocumental = new Date();
+        ds.update(rutaDAO, new String[] {"fechapaquetedocumental"});
 
         return filePD;
     }

@@ -1,0 +1,176 @@
+<div class="container">
+    <div id="titulo">
+        <h2>Carta Porte</h2>
+        <p class="lead">Datos de la Carta Porte</p>
+    </div>
+    <div class="row">
+        <div class="col-md-12 order-md-1">
+            <form id="transporte-datos">
+                <h4 class="mb-3">Figura de Transporte</h4>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Clave</label>
+                        <div class="input-group invalid">
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-buscar-figuratransporte">
+                                    <span class="fa fa-search" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <input type="text" class="form-control text-uppercase" name="figuratransporte_clave" placeholder="Escriba el nombre de la Figura de Transporte para iniciar la búsqueda"
+                                   value="" required data-record=''>
+                            <div class="invalid-feedback">
+                                La <strong>clave</strong> es requerida.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Nombre</label>
+                        <input type="text" class="form-control" name="figuratransporte_nombre" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>RFC</label>
+                        <input type="text" class="form-control" name="figuratransporte_rfc" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label>Licencia</label>
+                        <input type="text" class="form-control" name="figuratransporte_licencia" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label>Tipo</label>
+                        <select class="form-control" name="figuratransporte_tipofigura" disabled>
+                            <option value=""></option>
+                            <option value="01">Operador</option>
+                            <option value="02">Propietario</option>
+                            <option value="03">Arrendador</option>
+                            <option value="04">Notificado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="space"></div>
+                <div class="space"></div>
+                <h4 class="mb-3">Autotransporte</h4>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Clave</label>
+                        <div class="input-group invalid">
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-buscar-autotransporte">
+                                    <span class="fa fa-search" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <input type="text" class="form-control text-uppercase" name="autotransporte_clave" placeholder="Escriba la Placa del Autotransporte para iniciar la búsqueda"
+                                   value="" required data-record=''>
+                            <div class="invalid-feedback">
+                                La <strong>clave</strong> es requerida.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Tipo Permiso</label>
+                        <input type="text" class="form-control" name="autotransporte_tipopermiso" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Numero Permiso</label>
+                        <input type="text" class="form-control" name="autotransporte_numeropermiso" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Placa</label>
+                        <input type="text" class="form-control" name="autotransporte_placa" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label>A&ntilde;o Modelo</label>
+                        <input type="text" class="form-control" name="autotransporte_aniomodelo" readonly>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="div-facturas">
+        <div class="space"></div>
+        <hr>
+        <h3 class="mb-3">Facturas</h3>
+        <div class="row">
+            <div class="col-md-12 order-md-1">
+                <form id="factura-datos" class="needs-validation" novalidate>
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label>Factura:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group invalid">
+                                <div class="input-group-prepend">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-buscar-factura">
+                                        <span class="fa fa-search" aria-hidden="true"></span>&nbsp;Buscar
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control text-uppercase" name="factura" placeholder="" value="" required autocomplete="off">
+                                <div class="invalid-feedback">
+                                    La <strong>factura</strong> es requerida.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-medium"></div>
+                </form>
+            </div>
+        </div>
+        <div class="space-medium"></div>
+        <div class="row">
+            <div class="col-sm-12" id="facturas">
+            </div>
+        </div>
+        <div class="space-medium"></div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group row">
+                    <div class="col-sm-12">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-outline-primary" id="btn-quita-factura"
+                                onclick="quitaFactura(); return false;">
+                                <span class="fa fa-minus"></span> Quitar
+                            </button>
+                            <button class="btn btn-outline-primary" id="btn-sube-factura"
+                                onclick="subeFactura(); return false;">
+                                <span class="fa fa-arrow-up"></span>
+                            </button>
+                            <button class="btn btn-outline-primary" id="btn-baja-factura"
+                                onclick="bajaFactura(); return false;">
+                                <span class="fa fa-arrow-down"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group row pull-right">
+                    <div class="col-sm-12">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-outline-primary" id="btn-datos-llegada"
+                                onclick="datosLlegadaFactura(); return false;">
+                                <span class="fa fa-send"></span> Datos Llegada
+                            </button>
+                            <button class="btn btn-outline-primary" id="btn-carta-porte"
+                                onclick="generaCartaPorte(); return false;">
+                                <span class="fa fa-file-pdf-o"></span> Genera Carta Porte
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="space"></div>
+    <div class="space"></div>
+    <div id="notificacion">
+        Listo.
+    </div>
+    <div class="space"></div>
+</div>
