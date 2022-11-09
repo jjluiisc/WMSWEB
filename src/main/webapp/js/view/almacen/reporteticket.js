@@ -7,6 +7,13 @@ function initReporte() {
                 e.preventDefault();
             }
         }));
+    
+    document.querySelectorAll('input[name=contenedor]').forEach(node => node.addEventListener('keypress', e => {
+            if (e.keyCode === 13 || e.keyCode === 9) {
+                e.preventDefault();
+                verDatosAutomatico(); 
+            }
+        })); 
 }
 
 function validaParametrosReporte() {
@@ -98,6 +105,95 @@ function dibujaTablaDatos(parametros, response) {
     var $datos = $("#datos");
     $datos.empty();
     $datos.append($grid);
+}
+
+function verDatosAutomatico() {
+    if (!validaParametrosReporte())
+        return;
+
+    var parametros;
+
+    parametros = {
+            coleccion: "mx.reder.wms.collection.OrdenesSurtidoTicketCollection",
+            where: getWhereOrdenesSurtido(),
+            height: 370,
+            title: "Por Orden de Surtido",
+            datafields: [
+                {name: "compania", type: "string"},
+                {name: "flsurtido", type: "number"},
+                {name: "contenedor", type: "string"},
+                {name: "pedido", type: "string"},
+                {name: "cliente", type: "string"},
+                {name: "nombrecliente", type: "string"},
+                {name: "ruta", type: "string"}
+            ],
+            columns: [
+                {text: "Surtido", datafield: "flsurtido", width: "10%", cellsalign: "right"},
+                {text: "Contenedor", datafield: "contenedor", width: "10%"},
+                {text: "Pedido", datafield: "pedido", width: "10%"},
+                {text: "No.Cliente", datafield: "cliente", width: "10%"},
+                {text: "Cliente", datafield: "nombrecliente", width: "30%"},
+                {text: "Ruta", datafield: "ruta", width: "10%"}
+            ]
+        };
+
+    var onFail = function(err) {
+        var mensaje = "Error al buscar el registro.<br><br><b>("+err.status+") "+err.statusText+"</b>";
+        notify_error(mensaje);
+    };
+    var onError = function(response) {
+        if (response.exception.indexOf("WebException")!==-1) {
+            notify_warning(response.mensaje);
+        } else {
+            notify_error(response.exception);
+        }
+    };
+    var onComplete = function(response) {
+        dibujaTablaDatosAutomatico(parametros, response);
+        notify_info("Listo.");
+    };
+    coleccion(parametros.coleccion, parametros.where, onComplete, onError, onFail);
+}
+
+function dibujaTablaDatosAutomatico(parametros, response) {
+    var source = {
+        localdata: response,
+        datafields: parametros.datafields,
+        datatype: "array"
+    };
+    var dataAdapter = new $.jqx.dataAdapter(source);
+    var $grid = $("<div id=\"grid_datos\"></div>");
+    $grid.jqxGrid({
+        width: "100%",
+        height: parametros.height,
+        altrows: true,
+        sortable: true,
+        columnsresize: true,
+        source: dataAdapter,
+        columns: parametros.columns
+    });
+
+    var $datos = $("#datos");
+    $datos.empty();
+    $datos.append($grid);
+    
+    var $gridDatos = $("#grid_datos");
+    var rowindexes = $gridDatos.jqxGrid("getRows");
+    for(var indx=0; indx<rowindexes.length; indx++) {
+        var rowdata = rowindexes[indx];
+        if (rowdata) {
+            console.log(rowdata.flsurtido);
+            setTimeout(function () {
+                var params = "compania="+usuario.compania
+                        +"&flsurtido="+rowdata.flsurtido
+                        +"&contenedor="+rowdata.contenedor
+                download("/wms/Reporteador?reporte=OrdenSurtidoPedidoCertificaTicket&"+params);
+                //download("/wms/Reporteador?reporte=OrdenSurtidoPedidoCertificaDetalleTicket&"+params);
+
+                window.history.back();
+            }, 2.0 * 1000);            
+        }
+    }
 }
 
 function generarReporte() {
