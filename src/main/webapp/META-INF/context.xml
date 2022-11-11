@@ -3,5 +3,5 @@
     <Resource name="jdbc/reder" auth="Container" type="javax.sql.DataSource"
         maxTotal="100" maxIdle="30" maxWaitMillis="10000"
         username="sa" password="Gnew20*22R3d3r" driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-        url="jdbc:sqlserver://localhost:1433;databaseName=wms;"/>    
+        url="jdbc:sqlserver://reder.duckdns.org:1433;databaseName=wms;"/>    
 </Context>

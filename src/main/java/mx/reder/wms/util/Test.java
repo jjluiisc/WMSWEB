@@ -9,7 +9,9 @@ import com.atcloud.test.TestHttpSession;
 import com.atcloud.test.TestServletContext;
 import com.atcloud.util.CommonServices;
 import com.atcloud.util.Fecha;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.util.ArrayList;
 import mx.reder.wms.business.CartaPorteBusiness;
@@ -17,6 +19,7 @@ import mx.reder.wms.cfdi.EncriptacionFacade;
 import mx.reder.wms.command.FacturaRutaCommand;
 import mx.reder.wms.command.PaqueteDocumentalCommand;
 import mx.reder.wms.dao.engine.DatabaseDataSource;
+import mx.reder.wms.dao.entity.CartaPorteCfdiDAO;
 import mx.reder.wms.dao.entity.CertificadoSelloDigitalDAO;
 import mx.reder.wms.reports.ReporteadorImp;
 import mx.reder.wms.to.RutaFacturaCartaPorteTO;
@@ -247,7 +250,17 @@ public class Test {
                 factura2.distanciarecorrida = 65.0d;
                 facturas.add(factura2);
 
-                bussines.cartaPorte("01", "    3", "   49", facturas);
+                CartaPorteCfdiDAO cartaPorteCfdiDAO = bussines.cartaPorte("01", "SYSTEM", "    3", "   49", facturas);
+
+                File path = new File("carta-porte.xml");
+                log.debug("xml: " + path.getAbsolutePath());
+
+                try (OutputStreamWriter ows = new OutputStreamWriter(new FileOutputStream(path), "UTF-8")) {
+                    ows.write(cartaPorteCfdiDAO.xml);
+                }
+
+                File filePDF = bussines.generaPDF(cartaPorteCfdiDAO);
+                log.debug("pdf: " + filePDF.getAbsolutePath());
 
             } catch(Exception e) {
                 log.error(e.getMessage(), e);

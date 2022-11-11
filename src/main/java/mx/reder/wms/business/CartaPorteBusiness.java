@@ -9,11 +9,12 @@ import com.atcloud.util.Reflector;
 import com.atcloud.web.WebException;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import mx.gob.sat.cartaPorte20.CartaPorteDocument;
 import mx.gob.sat.cfd.x4.ComprobanteDocument;
+import mx.gob.sat.pagos20.PagosDocument;
 import mx.gob.sat.timbreFiscalDigital.TimbreFiscalDigitalDocument;
 import mx.reder.wms.cfdi.RespuestaComprobante;
 import mx.reder.wms.cfdi.TimbradoSWCFDImp;
@@ -35,6 +36,7 @@ import mx.reder.wms.cfdi.imp.ConceptoImp;
 import mx.reder.wms.cfdi.imp.DocumentoImp;
 import mx.reder.wms.cfdi.imp.ExtraccionImp;
 import mx.reder.wms.cfdi.imp.ReceptorImp;
+import mx.reder.wms.dao.GenericDAO;
 import mx.reder.wms.dao.entity.ASPELClienteDAO;
 import mx.reder.wms.dao.entity.ASPELFacturaDAO;
 import mx.reder.wms.dao.entity.ASPELInformacionEnvioDAO;
@@ -47,7 +49,10 @@ import mx.reder.wms.dao.entity.ColoniaSATDAO;
 import mx.reder.wms.dao.entity.CompaniaDAO;
 import mx.reder.wms.dao.entity.ConfigAutotransporteSATDAO;
 import mx.reder.wms.dao.entity.DireccionDAO;
+import mx.reder.wms.dao.entity.CartaPorteCfdiDAO;
 import mx.reder.wms.dao.entity.RutaFacturaDAO;
+import mx.reder.wms.reports.PDFFactory;
+import mx.reder.wms.reports.PDFFactoryImp;
 import mx.reder.wms.to.ASPELFacturaDetalleTO;
 import mx.reder.wms.to.AutotransporteTO;
 import mx.reder.wms.to.RutaFacturaCartaPorteTO;
@@ -74,7 +79,7 @@ public class CartaPorteBusiness {
         this.dsA = dsA;
     }
 
-    public void cartaPorte(String compania, String figuraTransporte, String autotransporte, ArrayList<RutaFacturaCartaPorteTO> facturas) throws Exception {
+    public CartaPorteCfdiDAO cartaPorte(String compania, String usuario, String figuraTransporte, String autotransporte, ArrayList<RutaFacturaCartaPorteTO> facturas) throws Exception {
         CompaniaDAO companiaDAO = new CompaniaDAO();
         companiaDAO.compania = compania;
         if (!ds.exists(companiaDAO))
@@ -162,8 +167,8 @@ public class CartaPorteBusiness {
         //
         //
         DocumentoImp documentoCFD = new DocumentoImp();
-        documentoCFD.serie = "PL202223051AR";
-        documentoCFD.folio = "00000024";
+        documentoCFD.serie = "CP";
+        documentoCFD.folio = F.f(GenericDAO.obtenerSiguienteFolio(ds, compania, "flcartaporte"), 10, F.ZF);
         documentoCFD.fecha = new Date();
         documentoCFD.tipoComprobante = "T";
         documentoCFD.moneda = "XXX";
@@ -500,11 +505,103 @@ public class CartaPorteBusiness {
 
         log.debug("fechatimbrado: "+timbreFiscalDigital.getFechaTimbrado().getTime());
 
-        File path = new File("carta-porte.xml");
-        log.debug("xml: " + path.getAbsolutePath());
+        // Inserta el CFDI
+        CartaPorteCfdiDAO cartaPorteCfdiDAO = new CartaPorteCfdiDAO();
+        cartaPorteCfdiDAO.id = null;
+        cartaPorteCfdiDAO.compania = compania;
+        cartaPorteCfdiDAO.status = "A";
+        cartaPorteCfdiDAO.fechastatus = new Date();
+        cartaPorteCfdiDAO.nocertificado = certificadoSelloDigitalDAO.nocertificado;
+        cartaPorteCfdiDAO.uuid = timbreFiscalDigital.getUUID();
+        cartaPorteCfdiDAO.fechatimbre = timbreFiscalDigital.getFechaTimbrado().getTime();
+        cartaPorteCfdiDAO.rfcemisor = comprobante.getEmisor().getRfc();
+        cartaPorteCfdiDAO.rfcreceptor = comprobante.getReceptor().getRfc();
+        cartaPorteCfdiDAO.total = comprobante.getTotal().doubleValue();
+        cartaPorteCfdiDAO.xml = xml;
+        cartaPorteCfdiDAO.cadenaoriginal = respuesta.getCadenaoriginal();
+        cartaPorteCfdiDAO.qr = respuesta.getQr();
+        cartaPorteCfdiDAO.fechacancelacion = null;
+        cartaPorteCfdiDAO.acusecancelacion = null;
 
-        try (OutputStreamWriter ows = new OutputStreamWriter(new FileOutputStream(path), "UTF-8")) {
-            ows.write(new String(respuesta.getXml(), "UTF-8"));
-        }
+        ds.insert(cartaPorteCfdiDAO);
+
+        Integer id = (Integer)ds.aggregate(cartaPorteCfdiDAO, "MAX", "id");
+        cartaPorteCfdiDAO.id = id;
+
+        return cartaPorteCfdiDAO;
     }
+
+    public File generaPDF(CartaPorteCfdiDAO cartaPorteCfdiDAO) throws Exception {
+        ComprobanteDocument cd = ComprobanteDocument.Factory.parse(cartaPorteCfdiDAO.xml);
+
+        TimbreFiscalDigitalDocument tfd = null;
+        CartaPorteDocument cpd = null;
+        PagosDocument pd = null;
+
+        //
+        // Leo los valores del timbre del comprobante
+        //
+        int begin = cartaPorteCfdiDAO.xml.indexOf("<tfd:TimbreFiscalDigital");
+        int end = cartaPorteCfdiDAO.xml.indexOf("</cfdi:Complemento>", begin);
+        String timbreFiscal = cartaPorteCfdiDAO.xml.substring(begin, end);
+
+        tfd = TimbreFiscalDigitalDocument.Factory.parse(timbreFiscal);
+        log.debug("UUID = "+tfd.getTimbreFiscalDigital().getUUID());
+
+        boolean cartaporte = cartaPorteCfdiDAO.xml.contains("cartaporte20");
+        if (cartaporte) {
+            begin = cartaPorteCfdiDAO.xml.indexOf("<cartaporte20:CartaPorte");
+            end = cartaPorteCfdiDAO.xml.indexOf("</cartaporte20:CartaPorte>", begin);
+            String cartaporteXML = cartaPorteCfdiDAO.xml.substring(begin, end+26);
+            cartaporteXML = cartaporteXML.replace("Version=", "xmlns:cartaporte20=\"http://www.sat.gob.mx/CartaPorte20\" Version=");
+
+            cpd = CartaPorteDocument.Factory.parse(cartaporteXML);
+            log.debug("Version Carta Porte = "+cpd.getCartaPorte().getVersion());
+        }
+
+        log.debug("Generando el PDF ... ");
+        PDFFactory pdfFactory = new PDFFactoryImp();
+        pdfFactory.setup(getFontPath(), getLogoPath());
+        byte[] pdf = pdfFactory.genera(ds, cd, tfd, cpd, null, cartaPorteCfdiDAO.cadenaoriginal, cartaPorteCfdiDAO.qr,
+                null, null, null, null, null, null, null, null,
+                null);
+                pdfFactory.terminate();
+
+        cartaPorteCfdiDAO.pdf = pdf;
+        ds.update(cartaPorteCfdiDAO, new String[] {"pdf"});
+
+        File dir = new File(Configuracion.getInstance().getProperty("ruta.pdf"));
+        if (!dir.exists())
+            throw new WebException("No existe este directorio ["+dir.getAbsolutePath()+"]");
+
+        File fileCartaPorte = new File(dir, "CartaPorte_"+cartaPorteCfdiDAO.id+".pdf");
+        log.debug("fileCartaPorte: "+fileCartaPorte.getAbsolutePath());
+
+        try (FileOutputStream fos = new FileOutputStream(fileCartaPorte)) {
+            fos.write(cartaPorteCfdiDAO.pdf);
+        }
+
+        return fileCartaPorte;
+    }
+
+    private String getFontPath() {
+        String rutaFont = Configuracion.getInstance().getProperty("ruta.font");
+        if (rutaFont==null)
+            return null;
+        File fileFont = new File(rutaFont);
+        if (fileFont.exists())
+            return fileFont.getAbsolutePath();
+        return null;
+    }
+
+    private String getLogoPath() {
+        String rutaLogo = Configuracion.getInstance().getProperty("ruta.logo");
+        if (rutaLogo==null)
+            return null;
+        File fileLogo = new File(rutaLogo);
+        if (fileLogo.exists())
+            return fileLogo.getAbsolutePath();
+        return null;
+    }
+
 }

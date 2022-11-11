@@ -51,6 +51,22 @@ function initCaptura() {
         }
     });
 
+    $("#btn-buscar-ruta").click(function() {
+        buscaRuta();
+    });
+    var $ruta = $("#factura-datos [name=ruta]");
+    $ruta.keydown(function(e) {
+        var key = e.keyCode;
+        switch(key) {
+            case 13:
+                buscaRuta();
+                return false;
+            case 27:
+                limpiaFactura();
+                return false;
+        }
+    });
+
     notify_info("Listo.");
 }
 
@@ -164,6 +180,56 @@ function buscaFactura() {
 
     notify_secondary("Buscando la Factura ...");
     lista("mx.reder.wms.dao.entity.RutaFacturaDAO", where, "fechafacturacion DESC",
+        onComplete, onError, onFail);
+}
+
+function buscaRuta() {
+    var $ruta = $("#factura-datos [name=ruta]");
+    var ruta = $ruta.val();
+    if (ruta==="") {
+        $ruta.focus();
+        return;
+    }
+
+    var onAceptar = function() {
+        $ruta.focus();
+    };
+    var onFail = function(err) {
+        var msg = "Error al buscar los registros.<br><br><b>("+err.status+") "+err.statusText+"</b>";
+        notify_error(msg);
+    };
+    var onError = function(response) {
+        if (response.exception.indexOf("WebException")!==-1) {
+            precaucion(response.mensaje, onAceptar);
+            notify_warning(response.mensaje);
+        } else {
+            error(response.exception, onAceptar);
+            notify_error(response.exception);
+        }
+    };
+    var onComplete = function(response) {
+        if (response.length>0) {
+            var ruta = response[0];
+
+            var onCompleteII = function(responseII) {
+                agregaFactura(responseII);
+                limpiaFactura();
+            };
+
+            var where = "compania = '"+usuario.compania+"' AND idruta = "+ruta.id;
+
+            notify_secondary("Buscando las Facturas de la Ruta ...");
+            lista("mx.reder.wms.dao.entity.RutaFacturaDAO", where, "parada",
+                onCompleteII, onError, onFail);
+        }
+
+        notify_info("Listo.");
+    };
+
+    var where = "compania = '"+usuario.compania+"' AND ruta = '"+ruta+"' AND fechacierre IS NOT NULL";
+
+    notify_secondary("Buscando la Ruta ...");
+    lista("mx.reder.wms.dao.entity.RutaDAO", where, "id DESC", //FETCH FIRST 1 ROW ONLY
         onComplete, onError, onFail);
 }
 
@@ -299,7 +365,6 @@ function seleccionaDistanciaYFechaLlegada(onSelected, onCanceled) {
 }
 
 function generaCartaPorte() {
-
     var $grid = $("#grid_facturas");
     var rows = $grid.jqxGrid("getrows");
 
@@ -316,7 +381,67 @@ function generaCartaPorte() {
         }
     }
 
-    console.log(rows);
+    var transporte = getValoresForma("#transporte-datos");
+
+    if (transporte.figuratransporte_clave==="") {
+        precaucion("Debe de capturar la Figura de Transporte.");
+        return;
+    }
+    if (transporte.autotransporte_clave==="") {
+        precaucion("Debe de capturar el Autotransporte.");
+        return;
+    }
+
+    var aceptar = function() {
+        generaCartaPorteConfirmado(transporte, rows);
+    };
+    pregunta("&iquest;Esta seguro de <b>Generar la Carta Porte</b>?", aceptar);
+
 }
 
+function generaCartaPorteConfirmado(transporte, rows) {
+    var $btn = $("#btn-carta-porte");
+    $btn.attr("disabled", true);
+
+    var data = {
+        id: "GeneraCartaPorte",
+        compania: usuario.compania,
+        usuario: usuario.usuario,
+        transporte: JSON.stringify(transporte),
+        rows: JSON.stringify(rows)
+    };
+
+    var onAceptar = function() {
+        $btn.removeAttr("disabled");
+    };
+    var onFail = function(err) {
+        var msg = "Error al generar la carta porte.<br><br><b>("+err.status+") "+err.statusText+"</b>";
+        error(msg, onAceptar);
+        notify_error(msg);
+    };
+    var onError = function(response) {
+        if (response.exception.indexOf("WebException")!==-1) {
+            precaucion(response.mensaje, onAceptar);
+            notify_warning(response.mensaje);
+        } else {
+            error(response.exception, onAceptar);
+            notify_error(response.exception);
+        }
+    };
+    var onComplete = function(response) {
+        onAceptar();
+
+        download("/wms/Descarga?archivo="+response.wrn);
+
+        var aceptar = function() {
+        };
+        var msg = "<b>Carta Porte Generada Correctamente.</b>";
+
+        mensaje(msg, aceptar);
+        notify_success(msg);
+    };
+
+    notify_secondary("Generando Carta Porte ...");
+    mvc(data, onComplete, onFail, onError);
+}
 

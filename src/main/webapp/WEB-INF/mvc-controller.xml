@@ -108,7 +108,11 @@
         <class-name>mx.reder.wms.command.AutotransportesCommand</class-name>
         <content-type>application/json</content-type>
     </command>
-
+    <command id="GeneraCartaPorte" name="GeneraCartaPorte">
+        <class-name>mx.reder.wms.command.GeneraCartaPorteCommand</class-name>
+        <content-type>application/json</content-type>
+    </command>
+    
     <!-- -->
     <command id="ASPELColeccion" name="Obtiene una Coleccion">
         <class-name>mx.reder.wms.command.ASPELColeccionCommand</class-name>
