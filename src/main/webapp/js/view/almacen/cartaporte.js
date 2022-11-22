@@ -242,8 +242,20 @@ function agregaFactura(response) {
     for (var i=0; i<response.length; i++) {
         var rowdata = response[i];
 
-        rowdata["distancia"] = 0;
-        rowdata["fechallegada"] = "";
+        var rows = $grid.jqxGrid("getrows");
+
+        var date = getDate();
+        if (rows.length===0) {
+            date = addMinutes(date, 30);
+        } else {
+            var rowdataII = rows[rows.length - 1];
+            var lastdate = parseDateTime(rowdataII["fechallegada"]);
+            date = addMinutes(lastdate, 10);
+        }
+        date.setSeconds(0, 0);
+
+        rowdata["distancia"] = 10.0;
+        rowdata["fechallegada"] = getISODateTime(date);
 
         var commit = $grid.jqxGrid("addrow", rowdata.idubicacion, rowdata, "last");
         $grid.jqxGrid("clearselection");
@@ -295,10 +307,10 @@ function datosLlegadaFactura() {
         notify_info("Listo.");
     };
 
-    seleccionaDistanciaYFechaLlegada(onSelected, onCancel);
+    seleccionaDistanciaYFechaLlegada(rowdata, onSelected, onCancel);
 }
 
-function seleccionaDistanciaYFechaLlegada(onSelected, onCanceled) {
+function seleccionaDistanciaYFechaLlegada(rowdata, onSelected, onCanceled) {
     var onComplete = function(response) {
         var $content = $(response);
 
@@ -336,6 +348,9 @@ function seleccionaDistanciaYFechaLlegada(onSelected, onCanceled) {
         $("#modalDialog3Footer").append($buttonAceptar);
 
         var $distancia = $("#destino-datos [name=distancia]");
+        $distancia.val(parseFloat(rowdata["distancia"]));
+        var $fechallegada = $("#destino-datos [name=fechallegada]");
+        $fechallegada.val(rowdata["fechallegada"].slice(0,16));
 
         var $notify = $("#destino-notificacion");
 

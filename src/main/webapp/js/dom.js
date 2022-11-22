@@ -3,7 +3,7 @@ var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
 function trim(value) {
     return value.replace(rtrim, "");
 }
-    
+
 function startsWith(value, str) {
     return value.indexOf(str)===0;
 }
@@ -50,9 +50,22 @@ function getDaysSince(target) {
     return out.join(" ");
 }
 
+function addMinutes(date, minutes) {
+    return new Date(date.getTime() + minutes * 60000);
+}
+
 function parseDate(date) {
     var tokens = date.split("-");
-    return new Date(parseInt(tokens[0]), parseInt(tokens[1]), parseInt(tokens[2]));
+    return new Date(parseInt(tokens[0]), parseInt(tokens[1]) - 1, parseInt(tokens[2]));
+}
+
+function parseDateTime(date) {
+    var tokens = date.split(" ");
+    var tokensD = tokens[0].split("-");
+    var tokensT = tokens[1].split(":");
+    var date = new Date(parseInt(tokensD[0]), parseInt(tokensD[1]) - 1, parseInt(tokensD[2]), parseInt(tokensT[0]), parseInt(tokensT[1]), parseInt(tokensT[2]));
+    var localoffset = -(date.getTimezoneOffset() / 60);
+    return new Date(date.getTime() + localoffset * 3600 * 1000);
 }
 
 function formatNumber(value) {
