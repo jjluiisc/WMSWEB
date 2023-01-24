@@ -171,16 +171,20 @@ function buscaFactura() {
         }
     };
     var onComplete = function(response) {
-        agregaFactura(response);
+        agregaFactura(response, true, onAceptar);
         limpiaFactura();
         notify_info("Listo.");
     };
 
-    var where = "compania = '"+usuario.compania+"' AND factura = '"+factura+"'";
+    var data = {
+        id: "CartaPorteFactura",
+        compania: usuario.compania,
+        usuario: usuario.usuario,
+        factura: factura
+    };
 
     notify_secondary("Buscando la Factura ...");
-    lista("mx.reder.wms.dao.entity.RutaFacturaDAO", where, "fechafacturacion DESC",
-        onComplete, onError, onFail);
+    mvc(data, onComplete, onFail, onError);
 }
 
 function buscaRuta() {
@@ -212,15 +216,19 @@ function buscaRuta() {
             var ruta = response[0];
 
             var onCompleteII = function(responseII) {
-                agregaFactura(responseII);
+                agregaFactura(responseII, false, onAceptar);
                 limpiaFactura();
             };
 
-            var where = "compania = '"+usuario.compania+"' AND idruta = "+ruta.id;
+            var data = {
+                id: "CartaPorteFactura",
+                compania: usuario.compania,
+                usuario: usuario.usuario,
+                idruta: ruta.id
+            };
 
             notify_secondary("Buscando las Facturas de la Ruta ...");
-            lista("mx.reder.wms.dao.entity.RutaFacturaDAO", where, "parada",
-                onCompleteII, onError, onFail);
+            mvc(data, onCompleteII, onFail, onError);
         }
 
         notify_info("Listo.");
@@ -233,33 +241,42 @@ function buscaRuta() {
         onComplete, onError, onFail);
 }
 
-function agregaFactura(response) {
-    if (response.length===0)
-        return;
-
-    var $grid = $("#grid_facturas");
-
+function agregaFactura(response, notificar, onAceptar) {
     for (var i=0; i<response.length; i++) {
         var rowdata = response[i];
 
-        var rows = $grid.jqxGrid("getrows");
-
-        var date = getDate();
-        if (rows.length===0) {
-            date = addMinutes(date, 30);
+        // Se agrega al grid solo si no existe
+        if (rowdata.idcartaporte===0) {
+            agregaFacturaGrid(rowdata);
         } else {
-            var rowdataII = rows[rows.length - 1];
-            var lastdate = parseDateTime(rowdataII["fechallegada"]);
-            date = addMinutes(lastdate, 10);
+            if (notificar) {
+                error("Esta factura <b>"+rowdata.factura+"</b> ya esta en una Carta Porte previa.", onAceptar);
+                notify_error(response.exception);
+            }
         }
-        date.setSeconds(0, 0);
-
-        rowdata["distancia"] = 10.0;
-        rowdata["fechallegada"] = getISODateTime(date);
-
-        var commit = $grid.jqxGrid("addrow", rowdata.idubicacion, rowdata, "last");
-        $grid.jqxGrid("clearselection");
     }
+}
+
+function agregaFacturaGrid(rowdata) {
+    var $grid = $("#grid_facturas");
+
+    var rows = $grid.jqxGrid("getrows");
+
+    var date = getDate();
+    if (rows.length===0) {
+        date = addMinutes(date, 30);
+    } else {
+        var rowdataII = rows[rows.length - 1];
+        var lastdate = parseDateTime(rowdataII["fechallegada"]);
+        date = addMinutes(lastdate, 15);
+    }
+    date.setSeconds(0, 0);
+
+    rowdata["distancia"] = rowdata.distancia;
+    rowdata["fechallegada"] = getISODateTime(date);
+
+    var commit = $grid.jqxGrid("addrow", rowdata.idubicacion, rowdata, "last");
+    $grid.jqxGrid("clearselection");
 }
 
 function quitaFactura() {
@@ -411,7 +428,6 @@ function generaCartaPorte() {
         generaCartaPorteConfirmado(transporte, rows);
     };
     pregunta("&iquest;Esta seguro de <b>Generar la Carta Porte</b>?", aceptar);
-
 }
 
 function generaCartaPorteConfirmado(transporte, rows) {

@@ -1,5 +1,7 @@
 package mx.reder.wms.business;
 
+import com.atcloud.commerce.entity.MailBox;
+import com.atcloud.commerce.services.EmailServices;
 import com.atcloud.dao.engine.DatabaseServices;
 import com.atcloud.util.CommonServices;
 import com.atcloud.util.F;
@@ -9,6 +11,7 @@ import com.atcloud.util.Reflector;
 import com.atcloud.web.WebException;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +40,7 @@ import mx.reder.wms.cfdi.imp.DocumentoImp;
 import mx.reder.wms.cfdi.imp.ExtraccionImp;
 import mx.reder.wms.cfdi.imp.ReceptorImp;
 import mx.reder.wms.dao.GenericDAO;
+import mx.reder.wms.dao.entity.ASPELClienteCamposLibresDAO;
 import mx.reder.wms.dao.entity.ASPELClienteDAO;
 import mx.reder.wms.dao.entity.ASPELFacturaDAO;
 import mx.reder.wms.dao.entity.ASPELInformacionEnvioDAO;
@@ -50,11 +54,15 @@ import mx.reder.wms.dao.entity.CompaniaDAO;
 import mx.reder.wms.dao.entity.ConfigAutotransporteSATDAO;
 import mx.reder.wms.dao.entity.DireccionDAO;
 import mx.reder.wms.dao.entity.CartaPorteCfdiDAO;
+import mx.reder.wms.dao.entity.CartaPorteFacturaDAO;
+import mx.reder.wms.dao.entity.RutaCfdiDAO;
 import mx.reder.wms.dao.entity.RutaFacturaDAO;
 import mx.reder.wms.reports.PDFFactory;
 import mx.reder.wms.reports.PDFFactoryImp;
 import mx.reder.wms.to.ASPELFacturaDetalleTO;
 import mx.reder.wms.to.AutotransporteTO;
+import mx.reder.wms.to.CartaPorteFacturaTO;
+import mx.reder.wms.to.CorreoFacturaTO;
 import mx.reder.wms.to.RutaFacturaCartaPorteTO;
 import mx.reder.wms.to.TipoFiguraTransporteTO;
 import mx.reder.wms.util.Configuracion;
@@ -79,6 +87,74 @@ public class CartaPorteBusiness {
         this.dsA = dsA;
     }
 
+    public ArrayList<CartaPorteFacturaTO> cartaPorteFacturas(String compania, String usuario, String idruta, String factura) throws Exception {
+        CompaniaDAO companiaDAO = new CompaniaDAO();
+        companiaDAO.compania = compania;
+        if (!ds.exists(companiaDAO))
+            throw new WebException("No existe esta Compania ["+companiaDAO+"]");
+
+        if (idruta==null&&factura==null)
+            throw new WebException("No se especifico ni ruta ni factura");
+
+        StringBuilder where = new StringBuilder();
+        where.append("compania = '").append(compania).append("' ");
+        if (idruta!=null)
+            where.append("AND idruta = ").append(idruta).append(" ");
+        if (factura!=null)
+            where.append("AND factura = '").append(factura).append("' ");
+
+        ArrayList<CartaPorteFacturaTO> facturas = new ArrayList<>();
+        ArrayList<RutaFacturaDAO> rutaFacturas = ds.select(new RutaFacturaDAO(), where.toString(), "parada, flsurtido");
+        for (RutaFacturaDAO rutaFacturaDAO : rutaFacturas) {
+            CartaPorteFacturaDAO cartaPorteFacturaDAO = new CartaPorteFacturaDAO();
+            cartaPorteFacturaDAO.compania = rutaFacturaDAO.compania;
+            cartaPorteFacturaDAO.flsurtido = rutaFacturaDAO.flsurtido;
+
+            CartaPorteFacturaTO cartaPorteFacturaTO = new CartaPorteFacturaTO();
+
+            //
+            // Si existe la factura no se va agregar al grid, no tiene caso ir por los demas datos.
+            //
+            if (ds.exists(cartaPorteFacturaDAO)) {
+                Reflector.copyAllFields(cartaPorteFacturaDAO, cartaPorteFacturaTO);
+                facturas.add(cartaPorteFacturaTO);
+                continue;
+            }
+
+            Reflector.copyAllFields(rutaFacturaDAO, cartaPorteFacturaTO);
+
+            ASPELFacturaDAO aspelFacturaDAO = new ASPELFacturaDAO();
+            aspelFacturaDAO.setEmpresa(rutaFacturaDAO.compania);
+            aspelFacturaDAO.CVE_DOC = rutaFacturaDAO.factura;
+            if (!dsA.exists(aspelFacturaDAO))
+                throw new WebException("No existe esta Factura ["+aspelFacturaDAO+"]");
+
+            log.debug(Reflector.toStringAllFields(aspelFacturaDAO));
+
+            ASPELClienteDAO aspelClienteDAO = new ASPELClienteDAO();
+            aspelClienteDAO.setEmpresa(rutaFacturaDAO.compania);
+            aspelClienteDAO.CLAVE = aspelFacturaDAO.CVE_CLPV;
+            if (!dsA.exists(aspelClienteDAO))
+                throw new WebException("No existe este Cliente ["+aspelClienteDAO+"]");
+
+            log.debug(Reflector.toStringAllFields(aspelClienteDAO));
+
+            ASPELClienteCamposLibresDAO aspelClienteCamposLibresDAO = new ASPELClienteCamposLibresDAO();
+            aspelClienteCamposLibresDAO.setEmpresa(rutaFacturaDAO.compania);
+            aspelClienteCamposLibresDAO.CVE_CLIE = aspelFacturaDAO.CVE_CLPV;
+            if (!dsA.exists(aspelClienteCamposLibresDAO))
+                throw new WebException("No existe este Cliente Campos Libres ["+aspelClienteCamposLibresDAO+"]");
+
+            log.debug(Reflector.toStringAllFields(aspelClienteCamposLibresDAO));
+
+            cartaPorteFacturaTO.distancia = aspelClienteCamposLibresDAO.CAMPLIB11==null ? 0.0 : aspelClienteCamposLibresDAO.CAMPLIB11;
+
+            facturas.add(cartaPorteFacturaTO);
+        }
+
+        return facturas;
+    }
+
     public CartaPorteCfdiDAO cartaPorte(String compania, String usuario, String figuraTransporte, String autotransporte, ArrayList<RutaFacturaCartaPorteTO> facturas) throws Exception {
         CompaniaDAO companiaDAO = new CompaniaDAO();
         companiaDAO.compania = compania;
@@ -89,6 +165,10 @@ public class CartaPorteBusiness {
         direccionDAO.direccion = companiaDAO.direccion;
         if (!ds.exists(direccionDAO))
             throw new WebException("No existe esta Direccion ["+direccionDAO+"]");
+
+        File dir = new File(Configuracion.getInstance().getProperty("ruta.pdf"));
+        if (!dir.exists())
+            throw new WebException("No existe este directorio ["+dir.getAbsolutePath()+"]");
 
         //
         //
@@ -195,6 +275,8 @@ public class CartaPorteBusiness {
         int countFacturas = 0;
         HashMap<String, ConceptoImp> detallesH = new HashMap<>();
         HashMap<String, ArrayList<CartaPorteCantidadTransportaCFDImp>> detallesDestinos = new HashMap<>();
+        ArrayList<CartaPorteFacturaDAO> cartaPorteFacturas = new ArrayList<>();
+        ArrayList<CorreoFacturaTO> correos = new ArrayList<>();
 
         for (RutaFacturaCartaPorteTO factura : facturas) {
             RutaFacturaDAO rutaFacturaDAO = new RutaFacturaDAO();
@@ -326,6 +408,56 @@ public class CartaPorteBusiness {
 
                 detallesH.put(detalle.getSKU(), conceptoImp);
             }
+
+            //
+            // Agrego la Factura de la Carta Porte
+            //
+            CartaPorteFacturaDAO cartaPorteFacturaDAO = new CartaPorteFacturaDAO();
+            Reflector.copyAllFields(rutaFacturaDAO, cartaPorteFacturaDAO);
+            cartaPorteFacturas.add(cartaPorteFacturaDAO);
+
+            //
+            // Armo el Correo por cada Factura
+            //
+            CorreoFacturaTO correoFacturaTO = new CorreoFacturaTO();
+            correoFacturaTO.email = "joelbecerram@gmail.com"; //aspelClienteDAO.EMAILPRED;
+            correoFacturaTO.titulo = "Envío de Comprobante Fiscal Digital : "+aspelFacturaDAO.CVE_DOC;
+            correoFacturaTO.mensaje = makeTextMensaje(companiaDAO, aspelClienteDAO, aspelFacturaDAO);
+
+            ArrayList<RutaCfdiDAO> cfdis = ds.select(new RutaCfdiDAO(),
+                    "compania = '"+rutaFacturaDAO.compania+"' AND flsurtido = "+rutaFacturaDAO.flsurtido+" AND idruta = "+rutaFacturaDAO.idruta+" AND status = 'A'");
+            if (cfdis.isEmpty())
+                throw new WebException("No encontre CFDIs de esta factura ["+rutaFacturaDAO.compania+";"+rutaFacturaDAO.flsurtido+"] con estado A");
+            if (cfdis.size()>1)
+                throw new WebException("Hay mas de 1 CFDIs de esta factura ["+rutaFacturaDAO.compania+";"+rutaFacturaDAO.flsurtido+"] con estado A");
+
+            RutaCfdiDAO rutaCfdiDAO = cfdis.get(0);
+
+            File filePDF = new File(dir, "Factura_"+rutaFacturaDAO.idruta+"_"+rutaFacturaDAO.factura+".pdf");
+            log.debug("filePDF: "+filePDF.getAbsolutePath());
+            if (!filePDF.exists()) {
+                if (rutaCfdiDAO.pdf!=null) {
+                    try (FileOutputStream fos = new FileOutputStream(filePDF)) {
+                        fos.write(rutaCfdiDAO.pdf);
+                    }
+                    correoFacturaTO.attachments.add(filePDF);
+                }
+            } else {
+                correoFacturaTO.attachments.add(filePDF);
+            }
+
+            File fileXML = new File(dir, "Factura_"+rutaFacturaDAO.idruta+"_"+rutaFacturaDAO.factura+".xml");
+            log.debug("fileXML: "+fileXML.getAbsolutePath());
+            if (!fileXML.exists()) {
+                try (OutputStreamWriter ows = new OutputStreamWriter(new FileOutputStream(fileXML), "UTF-8")) {
+                    ows.write(rutaCfdiDAO.xml);
+                }
+                correoFacturaTO.attachments.add(fileXML);
+            } else {
+                correoFacturaTO.attachments.add(fileXML);
+            }
+
+            correos.add(correoFacturaTO);
         }
 
         ArrayList<ConceptoCFD> detalles = new ArrayList<>();
@@ -528,7 +660,89 @@ public class CartaPorteBusiness {
         Integer id = (Integer)ds.aggregate(cartaPorteCfdiDAO, "MAX", "id");
         cartaPorteCfdiDAO.id = id;
 
+        // Inserta la informacion de Factura - CFDI Carta Porte
+        for (CartaPorteFacturaDAO cartaPorteFacturaDAO : cartaPorteFacturas) {
+            cartaPorteFacturaDAO.idcartaporte = cartaPorteCfdiDAO.id;
+            cartaPorteFacturaDAO.status = "A";
+            cartaPorteFacturaDAO.fechastatus = new Date();
+
+            ds.insert(cartaPorteFacturaDAO);
+        }
+
+        // Envia Correos
+        for (CorreoFacturaTO correoFacturaTO : correos) {
+            log.debug("Envio el correo a: "+correoFacturaTO.email);
+
+            try {
+                EmailServices es = new EmailServices(correoFacturaTO.email, correoFacturaTO.titulo, correoFacturaTO.mensaje, correoFacturaTO.attachments);
+                MailBox mailBox = new MailBox(
+                        Configuracion.getInstance().getProperty("cfdi.smtp.server"),
+                        Configuracion.getInstance().getIntProperty("cfdi.smtp.port"),
+                        Configuracion.getInstance().getProperty("cfdi.smtp.username"),
+                        Configuracion.getInstance().getProperty("cfdi.smtp.password"),
+                        Configuracion.getInstance().getBooleanProperty("cfdi.smtp.ssl"),
+                        Configuracion.getInstance().getBooleanProperty("cfdi.smtp.authenticate"),
+                        Configuracion.getInstance().getBooleanProperty("cfdi.smtp.starttls")
+                );
+                mailBox.setTimeout(Configuracion.getInstance().getIntProperty("cfdi.smtp.timeout"));
+                mailBox.setProtocols(Configuracion.getInstance().getProperty("cfdi.smtp.protocols"));
+                es.sendEmail(mailBox);
+
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+
         return cartaPorteCfdiDAO;
+    }
+
+    public String makeTextMensaje(CompaniaDAO companiaDAO, ASPELClienteDAO aspelClienteDAO, ASPELFacturaDAO aspelFacturaDAO) {
+        StringBuilder html = new StringBuilder();
+
+        html.append("<html>");
+        html.append("<head>");
+        html.append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+        html.append("<style>");
+        html.append("html {font-family: sans-serif; line-height: 1.15; -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);}");
+        html.append(".w-100 {width: 100%;}");
+        html.append(".center {display: block; margin-left: auto; margin-right: auto;}");
+        html.append(".column {float: left; width: 50%;}");
+        html.append(".row:after {content: \"\"; display: table; clear: both;}");
+        html.append(".lead {font-size: 1.25rem; font-weight: 300;}");
+        html.append(".text-center {text-align: center !important;}");
+        html.append(".text-left {text-align: left !important;}");
+        html.append(".text-header {color: #00205c; font-size: 1.5em; font-weight: bold; font-style: normal;}");
+        html.append(".text-column {color: #00205c; font-size: 1.2em; font-weight: bold; font-style: normal;}");
+        html.append(".text-title {color: #00205c; font-size: 1.0em; font-weight: bold; font-style: normal;}");
+        html.append(".text-data {color: #000000; font-size: 1.0em; font-weight: normal; font-style: normal;}");
+        html.append("th, td {padding-top: 15px; padding-bottom: 15px; padding-right: 5px; padding-left: 5px;}");
+        html.append(".padding-simple {padding-top: 5px; padding-bottom: 5px; padding-right: 5px; padding-left: 5px;}");
+        html.append(".button {background-color: #26a845; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px;}");
+        html.append("</style>");
+        html.append("</head>");
+        html.append("<body>");
+        html.append("<div style=\"height: 40px;\"></div>");
+        html.append("<div class=\"w-100\">")
+            .append("<div class=\"lead\" style=\"font-size: 2.0em;\"><b>Para: ").append(aspelClienteDAO.NOMBRE).append(" (").append(aspelClienteDAO.RFC).append(") </b></div>")
+            .append("<div style=\"height: 40px;\"></div>")
+            .append("<div class=\"lead\" style=\"font-size: 1.8em;\"><b>Estimado Cliente,</div>")
+            .append("<div style=\"height: 20px;\"></div>")
+            .append("<div class=\"lead\" style=\"font-size: 1.8em;\"><b>").append(companiaDAO.nombre).append(" (").append(companiaDAO.rfc)
+                .append(") emiti&oacute; para Usted un(os) documento(s) de tipo Factura con las siguientes caracter&iacute;sticas: </b></div>")
+            .append("<div style=\"height: 20px;\"></div>")
+            .append("<div class=\"lead\" style=\"font-size: 1.5em;\">Serie y Folio: <b>").append(aspelFacturaDAO.CVE_DOC).append("</b></div>")
+            .append("<div class=\"lead\" style=\"font-size: 1.5em;\">Fecha de Emisi&oacute;n: <b>").append(Fecha.getFechaHora(aspelFacturaDAO.FECHAELAB)).append("</b></div>")
+            .append("<div class=\"lead\" style=\"font-size: 1.5em;\">Monto Total: <b>").append(Numero.getMoneda(aspelFacturaDAO.IMPORTE)).append("</b></div>")
+            .append("<div style=\"height: 40px;\"></div>")
+            .append("<div class=\"lead\" style=\"font-size: 1.8em;\">Consulta los datos adjuntos, por favor.</div>")
+            .append("<div style=\"height: 40px;\"></div>");
+        //html.append("<div class=\"w-100\"><img alt=\"logo\" width=\"300px\" class=\"center\" src=\"https://pedidos.laeuropea.com.mx/cfdi/assets/media/various/logo.png\"></div>");
+        html.append("<div style=\"height: 20px;\"></div>");
+
+        html.append("</body>");
+        html.append("</html>");
+
+        return html.toString();
     }
 
     public File generaPDF(CartaPorteCfdiDAO cartaPorteCfdiDAO) throws Exception {

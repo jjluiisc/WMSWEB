@@ -1,5 +1,7 @@
 package mx.reder.wms.util;
 
+import com.atcloud.commerce.entity.MailBox;
+import com.atcloud.commerce.services.EmailServices;
 import com.atcloud.dao.engine.DatabaseReflector;
 import com.atcloud.dao.engine.DatabaseServices;
 import com.atcloud.dao.engine.DatabaseTableColumn;
@@ -112,6 +114,31 @@ public class Test {
             } catch(Exception e) {
                 log.error(e.getMessage(), e);
             }*/
+            
+            String email = "joelbecerram@gmail.com";
+            String titulo = "Prueba";
+            String mensaje = "Hola Mundo";
+            
+            log.debug("Envio el correo a: "+email);
+
+            try {
+                EmailServices es = new EmailServices(email, titulo, mensaje, null);
+                MailBox mailBox = new MailBox(
+                        Configuracion.getInstance().getProperty("cfdi.smtp.server"),
+                        Configuracion.getInstance().getIntProperty("cfdi.smtp.port"),
+                        Configuracion.getInstance().getProperty("cfdi.smtp.username"),
+                        Configuracion.getInstance().getProperty("cfdi.smtp.password"),
+                        Configuracion.getInstance().getBooleanProperty("cfdi.smtp.ssl"),
+                        Configuracion.getInstance().getBooleanProperty("cfdi.smtp.authenticate"),
+                        Configuracion.getInstance().getBooleanProperty("cfdi.smtp.starttls")
+                );
+                mailBox.setTimeout(Configuracion.getInstance().getIntProperty("cfdi.smtp.timeout"));
+                mailBox.setProtocols(Configuracion.getInstance().getProperty("cfdi.smtp.protocols"));
+                es.sendEmail(mailBox);
+
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }            
         }
         if (excel!=null) {
             FileOutputStream fos = new FileOutputStream("reporte.xlsx");
