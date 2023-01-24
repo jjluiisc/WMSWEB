@@ -419,45 +419,53 @@ public class CartaPorteBusiness {
             //
             // Armo el Correo por cada Factura
             //
-            CorreoFacturaTO correoFacturaTO = new CorreoFacturaTO();
-            correoFacturaTO.email = "joelbecerram@gmail.com"; //aspelClienteDAO.EMAILPRED;
-            correoFacturaTO.titulo = "Envío de Comprobante Fiscal Digital : "+aspelFacturaDAO.CVE_DOC;
-            correoFacturaTO.mensaje = makeTextMensaje(companiaDAO, aspelClienteDAO, aspelFacturaDAO);
+            if (rutaFacturaDAO.serie.compareTo("BG")==0
+              ||rutaFacturaDAO.serie.compareTo("BO")==0
+              ||rutaFacturaDAO.serie.compareTo("BX")==0
+              ||rutaFacturaDAO.serie.compareTo("EFX")==0
+              ||rutaFacturaDAO.serie.compareTo("EFO")==0
+              ||rutaFacturaDAO.serie.compareTo("FO")==0) {
+                
+                CorreoFacturaTO correoFacturaTO = new CorreoFacturaTO();
+                correoFacturaTO.email = aspelClienteDAO.EMAILPRED;
+                correoFacturaTO.titulo = "Envío de Comprobante Fiscal Digital : "+aspelFacturaDAO.CVE_DOC;
+                correoFacturaTO.mensaje = makeTextMensaje(companiaDAO, aspelClienteDAO, aspelFacturaDAO);
 
-            ArrayList<RutaCfdiDAO> cfdis = ds.select(new RutaCfdiDAO(),
-                    "compania = '"+rutaFacturaDAO.compania+"' AND flsurtido = "+rutaFacturaDAO.flsurtido+" AND idruta = "+rutaFacturaDAO.idruta+" AND status = 'A'");
-            if (cfdis.isEmpty())
-                throw new WebException("No encontre CFDIs de esta factura ["+rutaFacturaDAO.compania+";"+rutaFacturaDAO.flsurtido+"] con estado A");
-            if (cfdis.size()>1)
-                throw new WebException("Hay mas de 1 CFDIs de esta factura ["+rutaFacturaDAO.compania+";"+rutaFacturaDAO.flsurtido+"] con estado A");
+                ArrayList<RutaCfdiDAO> cfdis = ds.select(new RutaCfdiDAO(),
+                        "compania = '"+rutaFacturaDAO.compania+"' AND flsurtido = "+rutaFacturaDAO.flsurtido+" AND idruta = "+rutaFacturaDAO.idruta+" AND status = 'A'");
+                if (cfdis.isEmpty())
+                    throw new WebException("No encontre CFDIs de esta factura ["+rutaFacturaDAO.compania+";"+rutaFacturaDAO.flsurtido+"] con estado A");
+                if (cfdis.size()>1)
+                    throw new WebException("Hay mas de 1 CFDIs de esta factura ["+rutaFacturaDAO.compania+";"+rutaFacturaDAO.flsurtido+"] con estado A");
 
-            RutaCfdiDAO rutaCfdiDAO = cfdis.get(0);
+                RutaCfdiDAO rutaCfdiDAO = cfdis.get(0);
 
-            File filePDF = new File(dir, "Factura_"+rutaFacturaDAO.idruta+"_"+rutaFacturaDAO.factura+".pdf");
-            log.debug("filePDF: "+filePDF.getAbsolutePath());
-            if (!filePDF.exists()) {
-                if (rutaCfdiDAO.pdf!=null) {
-                    try (FileOutputStream fos = new FileOutputStream(filePDF)) {
-                        fos.write(rutaCfdiDAO.pdf);
+                File filePDF = new File(dir, "Factura_"+rutaFacturaDAO.idruta+"_"+rutaFacturaDAO.factura+".pdf");
+                log.debug("filePDF: "+filePDF.getAbsolutePath());
+                if (!filePDF.exists()) {
+                    if (rutaCfdiDAO.pdf!=null) {
+                        try (FileOutputStream fos = new FileOutputStream(filePDF)) {
+                            fos.write(rutaCfdiDAO.pdf);
+                        }
+                        correoFacturaTO.attachments.add(filePDF);
                     }
+                } else {
                     correoFacturaTO.attachments.add(filePDF);
                 }
-            } else {
-                correoFacturaTO.attachments.add(filePDF);
-            }
 
-            File fileXML = new File(dir, "Factura_"+rutaFacturaDAO.idruta+"_"+rutaFacturaDAO.factura+".xml");
-            log.debug("fileXML: "+fileXML.getAbsolutePath());
-            if (!fileXML.exists()) {
-                try (OutputStreamWriter ows = new OutputStreamWriter(new FileOutputStream(fileXML), "UTF-8")) {
-                    ows.write(rutaCfdiDAO.xml);
+                File fileXML = new File(dir, "Factura_"+rutaFacturaDAO.idruta+"_"+rutaFacturaDAO.factura+".xml");
+                log.debug("fileXML: "+fileXML.getAbsolutePath());
+                if (!fileXML.exists()) {
+                    try (OutputStreamWriter ows = new OutputStreamWriter(new FileOutputStream(fileXML), "UTF-8")) {
+                        ows.write(rutaCfdiDAO.xml);
+                    }
+                    correoFacturaTO.attachments.add(fileXML);
+                } else {
+                    correoFacturaTO.attachments.add(fileXML);
                 }
-                correoFacturaTO.attachments.add(fileXML);
-            } else {
-                correoFacturaTO.attachments.add(fileXML);
-            }
 
-            correos.add(correoFacturaTO);
+                correos.add(correoFacturaTO);
+            }
         }
 
         ArrayList<ConceptoCFD> detalles = new ArrayList<>();
