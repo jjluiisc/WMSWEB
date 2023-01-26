@@ -21,6 +21,7 @@ import mx.reder.wms.dao.entity.InventarioDetalleDAO;
 import mx.reder.wms.util.Constantes;
 import java.util.HashMap;
 import java.util.Map;
+import mx.reder.wms.collection.CartasPorteCollection;
 import mx.reder.wms.collection.OrdenesSurtidoPedidoCollection;
 import mx.reder.wms.dao.entity.ClaveAlternaDAO;
 import mx.reder.wms.to.InventarioConteoUbicacionAcumuladoTo;
@@ -1132,5 +1133,89 @@ public class ExportadorExcelImp implements ExportadorClass {
         try (ServletOutputStream out = response.getOutputStream()) {
             wb.write(out);
         }
+    }
+    
+    public void exportaCartaPorte(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        response.setHeader("Content-Disposition", "attachment;filename=\"CartaPorte.xlsx\"");
+        response.setHeader("Set-Cookie", "fileDownload=true; path=/");
+
+        String compania = request.getParameter("compania");
+        String fechainicial = request.getParameter("fechainicial");
+        String fechafinal = request.getParameter("fechafinal");
+
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        XSSFSheet sheet = wb.createSheet("cartas porte");
+        sheet.setSelected(true);
+
+        XSSFRow row;
+        XSSFCell cell;
+
+        XSSFCellStyle headerStyle = wb.createCellStyle();
+        XSSFFont fontHeader = wb.createFont();
+        fontHeader.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
+        fontHeader.setColor(new XSSFColor(Color.white));
+        headerStyle.setFont(fontHeader);
+        headerStyle.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+        headerStyle.setFillForegroundColor(new XSSFColor(Color.lightGray));
+
+        row = sheet.createRow(0);
+        String[] headers = {
+            "Carta Porte", "Fecha Timbre", "UUID", "Factura"
+        };
+
+        int colNo = 0;
+        for(String header : headers) {
+            cell = row.createCell(colNo++);
+            cell.setCellValue(header);
+            cell.setCellStyle(headerStyle);
+
+            sheet.setColumnWidth(0, (header.length()*1 * 450));
+        }
+
+        int rowNo = 1;
+
+        XSSFDataFormat df = wb.createDataFormat();
+        
+        XSSFCellStyle datetimeStyle = wb.createCellStyle();
+        datetimeStyle.setDataFormat(df.getFormat("d/m/yy h:mm:ss"));
+        
+        StringBuilder whereCartaPorte = new StringBuilder();
+        whereCartaPorte.append("CPF.compania = '").append(compania).append("' ");
+        if (fechainicial!=null)
+            whereCartaPorte.append("AND CPCFDI.fechatimbre >= '").append(fechainicial).append("' ");
+        if (fechafinal!=null)
+            whereCartaPorte.append("AND CPCFDI.fechatimbre <= '").append(fechafinal).append(" 23:59:59' ");
+        
+        CartasPorteCollection cartasPorteCollection = new CartasPorteCollection();
+        ArrayList<CartasPorteCollection> cartasporte = ds.collection(new CartasPorteCollection(),
+                cartasPorteCollection.getSQL(whereCartaPorte.toString()));
+        
+        for(CartasPorteCollection cartaPorte : cartasporte) {
+            row = sheet.createRow(rowNo);
+            colNo = 0;
+            cell = row.createCell(colNo++);
+            cell.setCellValue(cartaPorte.idcartaporte);
+            cell = row.createCell(colNo++);
+            if (cartaPorte.fechatimbre!=null) {
+                cell.setCellValue(cartaPorte.fechatimbre);
+                cell.setCellStyle(datetimeStyle);
+            }
+            cell = row.createCell(colNo++);
+            cell.setCellValue(cartaPorte.uuid);
+            cell = row.createCell(colNo++);
+            cell.setCellValue(cartaPorte.factura);
+
+            rowNo++;
+        }
+
+        colNo = 0;
+        for(String header : headers) {
+            sheet.autoSizeColumn(colNo++);
+        }
+
+        ServletOutputStream out = response.getOutputStream();
+        wb.write(out);
+        out.close();
     }
 }
