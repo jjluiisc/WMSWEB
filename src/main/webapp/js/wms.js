@@ -379,6 +379,29 @@ function _reporteTicket() {
     loadMainPage("/wms/view/almacen/reporteticket.html", onComplete);
 }
 
+function reporteCartaPorte() {
+    var state = {
+        func: "_reporteCartaPorte"
+    };
+    pushState(state);
+
+    _reporteCartaPorte();
+}
+
+function _reporteCartaPorte() {
+    if (!validaPermiso("reporteCartaPorte"))
+        return false;
+
+    function onComplete() {
+        function onCompleteII() {
+            initReporte();
+        };
+        loadScript("/wms/js/view/almacen/reportecartaporte.js", onCompleteII);
+    };
+
+    loadMainPage("/wms/view/almacen/reportecartaporte.html", onComplete);
+}
+
 function rutas() {
     var state = {
         func: "_rutas"
