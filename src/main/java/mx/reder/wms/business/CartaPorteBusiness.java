@@ -147,7 +147,7 @@ public class CartaPorteBusiness {
 
             log.debug(Reflector.toStringAllFields(aspelClienteCamposLibresDAO));
 
-            cartaPorteFacturaTO.distancia = aspelClienteCamposLibresDAO.CAMPLIB11==null ? 0.0 : aspelClienteCamposLibresDAO.CAMPLIB11;
+            cartaPorteFacturaTO.distancia = aspelClienteCamposLibresDAO.CAMPLIB12==null ? 0.0 : aspelClienteCamposLibresDAO.CAMPLIB12;
 
             facturas.add(cartaPorteFacturaTO);
         }
@@ -425,7 +425,7 @@ public class CartaPorteBusiness {
               ||rutaFacturaDAO.serie.compareTo("EFX")==0
               ||rutaFacturaDAO.serie.compareTo("EFO")==0
               ||rutaFacturaDAO.serie.compareTo("FO")==0) {
-                
+
                 CorreoFacturaTO correoFacturaTO = new CorreoFacturaTO();
                 correoFacturaTO.email = aspelClienteDAO.EMAILPRED;
                 correoFacturaTO.titulo = "Envío de Comprobante Fiscal Digital : "+aspelFacturaDAO.CVE_DOC;

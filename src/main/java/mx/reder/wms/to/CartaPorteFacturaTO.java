@@ -7,7 +7,7 @@ public class CartaPorteFacturaTO implements Serializable {
     public String compania = "";
     public int flsurtido = 0;
     public int idcartaporte = 0;
-    public int parada = 0;
+    public String parada = "";
     public String status = "";
     public Date fechastatus = new Date(0);
     public String usuario = "";

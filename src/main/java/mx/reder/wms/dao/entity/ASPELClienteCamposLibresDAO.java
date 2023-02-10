@@ -16,7 +16,8 @@ public class ASPELClienteCamposLibresDAO implements DatabaseRecord, DatabaseReco
     public String CAMPLIB8 = "";
     public String CAMPLIB9 = "";
     public String CAMPLIB10 = "";
-    public Double CAMPLIB11 = 0.0;
+    public String CAMPLIB11 = "";
+    public Double CAMPLIB12 = 0.0;
 
     public ASPELClienteCamposLibresDAO() {
     }

@@ -26,6 +26,7 @@ import mx.reder.wms.cfdi.imp.ExtraccionImp;
 import mx.reder.wms.cfdi.imp.ReceptorImp;
 import mx.reder.wms.dao.entity.ASPELBitacoraDAO;
 import mx.reder.wms.dao.entity.ASPELCFDIDAO;
+import mx.reder.wms.dao.entity.ASPELClienteCamposLibresDAO;
 import mx.reder.wms.dao.entity.ASPELClienteDAO;
 import mx.reder.wms.dao.entity.ASPELControlDAO;
 import mx.reder.wms.dao.entity.ASPELCuentaPorCobrarDAO;
@@ -123,8 +124,17 @@ public class FacturaRutaBusiness {
             //
             RutaFacturaDAO rutaFacturaDAO = new RutaFacturaDAO(ordenSurtidoPedidoDAO.compania, ordenSurtidoPedidoDAO.flsurtido);
             if (!ds.exists(rutaFacturaDAO)) {
+                //
+                // Busca los Campos Libres del Cliente
+                //
+                ASPELClienteCamposLibresDAO aspelClienteCamposLibresDAO = new ASPELClienteCamposLibresDAO();
+                aspelClienteCamposLibresDAO.setEmpresa(rutaFacturaDAO.compania);
+                aspelClienteCamposLibresDAO.CVE_CLIE = ordenSurtidoPedidoDAO.cliente;
+                if (!dsA.exists(aspelClienteCamposLibresDAO))
+                    throw new WebException("No existe este Cliente Campos Libres ["+aspelClienteCamposLibresDAO+"]");
+
                 rutaFacturaDAO.idruta = rutaDAO.id;
-                rutaFacturaDAO.parada = 0;
+                rutaFacturaDAO.parada = aspelClienteCamposLibresDAO.CAMPLIB11;
                 rutaFacturaDAO.status = Constantes.ESTADO_PENDIENTE;
                 rutaFacturaDAO.fechastatus = new Date();
                 rutaFacturaDAO.usuario = usuario;
