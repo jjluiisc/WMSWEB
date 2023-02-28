@@ -38,6 +38,7 @@ public class OrdenSurtidoPedidoCertificaDS extends ReporteadorDS {
     private String totalLetras = "";
     private Date fechaCredito = null;
     private String referencia = "";
+    private String surtidor = "";
 
     public void getDataTicket(DatabaseServices ds, String compania, String flsurtido, String contenedor) throws Exception {
         String EsCertifica = "0";
@@ -59,6 +60,8 @@ public class OrdenSurtidoPedidoCertificaDS extends ReporteadorDS {
                 ordenSurtidoPedidoDAO.pedido.startsWith("ENX")){
                 setTipoFactura("NV");
         }
+        
+        setSurtidor(ordenSurtidoPedidoDAO.surtidor);
         
         DatabaseDataSource databaseDataSourceAspel = new DatabaseDataSource("REDER");
         Connection connectionAspel = databaseDataSourceAspel.getConnection();
@@ -342,6 +345,12 @@ public class OrdenSurtidoPedidoCertificaDS extends ReporteadorDS {
         this.referencia = referencia;
     }
     
-    
+    public String getSurtidor() {
+        return surtidor;
+    }
+
+    public void setSurtidor(String surtidor) {
+        this.surtidor = surtidor;
+    }
     
 }
