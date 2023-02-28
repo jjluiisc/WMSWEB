@@ -72,6 +72,7 @@ public class ReporteadorImp implements ReporteadorClass {
         parameters.put("fechaTicket1", format_simple.format(new java.util.Date()));
         parameters.put("credito", (ds.getDiasCredito() > 0 ? "CREDITO":"CONTADO"));
         parameters.put("referencia", ds.getReferencia());
+        parameters.put("surtidor", ds.getSurtidor());
    
 
         JasperReport jasperReport = JasperCompileManager.compileReport(file);
