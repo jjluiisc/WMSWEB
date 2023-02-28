@@ -17,6 +17,7 @@
 	<parameter name="fechaTicket1" class="java.lang.String"/>
 	<parameter name="credito" class="java.lang.String"/>
 	<parameter name="referencia" class="java.lang.String"/>
+	<parameter name="surtidor" class="java.lang.String"/>
 	<field name="rfccompania" class="java.lang.String"/>
 	<field name="nombrecompania" class="java.lang.String"/>
 	<field name="razonsocialcompania" class="java.lang.String"/>
@@ -79,7 +80,7 @@
 	<group name="contenedor" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{flsurtido}]]></groupExpression>
 		<groupHeader>
-			<band height="197">
+			<band height="209">
 				<staticText>
 					<reportElement style="header" positionType="Float" x="0" y="2" width="48" height="12"/>
 					<textElement textAlignment="Right" lineSpacing="Single"/>
@@ -181,6 +182,18 @@
 						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{referencia}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="header" positionType="Float" x="0" y="195" width="48" height="12"/>
+					<textElement textAlignment="Right" lineSpacing="Single"/>
+					<text><![CDATA[Surtidor:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="50" y="195" width="150" height="12"/>
+					<textElement>
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{surtidor}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
