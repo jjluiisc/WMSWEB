@@ -27,6 +27,7 @@ public class CancelaSurtidoOrdenSurtidoPedidoCommand implements WebCommandInterf
             String compania = request.getParameter("compania");
             String usuario = request.getParameter("usuario");
             String flsurtido = request.getParameter("flsurtido");
+            String motivocancelacion = request.getParameter("motivocancelacion");
             
             DatabaseDataSource databaseDataSourceAspel = new DatabaseDataSource("REDER");
             Connection connectionAspel = databaseDataSourceAspel.getConnection();
@@ -42,7 +43,7 @@ public class CancelaSurtidoOrdenSurtidoPedidoCommand implements WebCommandInterf
                 CancelaOrdenesSurtidoPedidosBusiness cancelar = new CancelaOrdenesSurtidoPedidosBusiness();
                 cancelar.setDatabaseServices(ds);
                 cancelar.setDatabaseAspelServices(dsAspel);
-                cancelar.cancelaSurtido(compania, usuario, flsurtido);
+                cancelar.cancelaSurtido(compania, usuario, flsurtido, motivocancelacion);
 
                 ds.commit();
                 dsAspel.commit();
