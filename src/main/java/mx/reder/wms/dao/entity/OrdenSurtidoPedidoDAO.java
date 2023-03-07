@@ -32,6 +32,8 @@ public class OrdenSurtidoPedidoDAO implements DatabaseRecord, java.io.Serializab
     public Date fechacertificando = null;
     public Date fechaconfirmada = null;
     public Date fechafacturada = null;
+    public Date fechacancelacion = null;
+    public String motivocancelacion = "";
     private String msg;
 
     public String getMsg() {
