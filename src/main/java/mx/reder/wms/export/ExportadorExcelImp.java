@@ -1218,4 +1218,191 @@ public class ExportadorExcelImp implements ExportadorClass {
         wb.write(out);
         out.close();
     }
+    
+    public void exportaOrdenesSurtidoPedidoCancelados(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        response.setHeader("Content-Disposition", "attachment;filename=\"OrdenesSurtidoPedidoCancelados.xlsx\"");
+        response.setHeader("Set-Cookie", "fileDownload=true; path=/");
+
+        String compania = request.getParameter("compania");
+        String fechainicial = request.getParameter("fechainicial");
+        String fechafinal = request.getParameter("fechafinal");
+        String pedido = request.getParameter("pedido");
+        String cliente = request.getParameter("cliente");
+
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        XSSFSheet sheet = wb.createSheet("ordenessurtido");
+        sheet.setSelected(true);
+
+        XSSFRow row;
+        XSSFCell cell;
+
+        XSSFCellStyle headerStyle = wb.createCellStyle();
+        XSSFFont fontHeader = wb.createFont();
+        fontHeader.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
+        fontHeader.setColor(new XSSFColor(Color.white));
+        headerStyle.setFont(fontHeader);
+        headerStyle.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+        headerStyle.setFillForegroundColor(new XSSFColor(Color.lightGray));
+
+        String[] headers = {
+            "Fecha de Generacion de O.S.", "Fecha de Cancelacion", "Folio O.S.", "Documento SAE", "Ruta",
+            "Cliente", "Vendedor", "Surtidor", "Motivo de Cancelacion",
+        };
+
+        int rowNo = 0;
+
+        row = sheet.createRow(rowNo++);
+
+        int colNo = 0;
+        for(String header : headers) {
+            cell = row.createCell(colNo++);
+            cell.setCellValue(header);
+            cell.setCellStyle(headerStyle);
+
+            sheet.setColumnWidth(0, (header.length()*1 * 450));
+        }
+
+        XSSFDataFormat df = wb.createDataFormat();
+
+        XSSFCellStyle monedaStyle = wb.createCellStyle();
+        monedaStyle.setDataFormat(df.getFormat("$#,##0.00;[Red]$-#,##0.00"));
+
+        XSSFCellStyle numeroStyle = wb.createCellStyle();
+        numeroStyle.setDataFormat(df.getFormat("#,##0;[Red]-#,##0"));
+
+        XSSFCellStyle decimalStyle = wb.createCellStyle();
+        decimalStyle.setDataFormat(df.getFormat("#,##0.00"));
+
+        XSSFCellStyle dateStyle = wb.createCellStyle();
+        dateStyle.setDataFormat(df.getFormat("d/m/yy"));
+
+        XSSFCellStyle datetimeStyle = wb.createCellStyle();
+        datetimeStyle.setDataFormat(df.getFormat("d/m/yy h:mm:ss"));
+
+        XSSFCellStyle timeStyle = wb.createCellStyle();
+        timeStyle.setDataFormat(df.getFormat("h:mm:ss"));
+
+        StringBuilder whereOrdenSurtido = new StringBuilder();
+        whereOrdenSurtido.append("os.compania = '").append(compania).append("' AND os.status = 'CA' ");
+        if (fechainicial!=null)
+            whereOrdenSurtido.append("AND os.fechapedido >= '").append(fechainicial).append("' ");
+        if (fechafinal!=null)
+            whereOrdenSurtido.append("AND os.fechapedido <= '").append(fechafinal).append(" 23:59:59' ");
+        if (pedido!=null)
+            whereOrdenSurtido.append("AND os.pedido LIKE '%").append(pedido).append("%' ");
+        if (cliente!=null)
+            whereOrdenSurtido.append("AND os.cliente LIKE '%").append(cliente).append("%' ");
+
+        String folios = "";
+        int x = 0;
+        OrdenesSurtidoPedidoCanceladosCollection ordenesSurtidoPedidoCollection = new OrdenesSurtidoPedidoCanceladosCollection();
+        ArrayList<OrdenesSurtidoPedidoCanceladosCollection> ordenessurtido = ds.collection(new OrdenesSurtidoPedidoCanceladosCollection(),
+                ordenesSurtidoPedidoCollection.getSQL(whereOrdenSurtido.toString()));
+
+        for(OrdenesSurtidoPedidoCanceladosCollection ordenesSurtido : ordenessurtido) {
+            row = sheet.createRow(rowNo);
+            colNo = 0;
+            if(x==0)
+                folios += ordenesSurtido.flsurtido;
+            else
+                folios += ", " + ordenesSurtido.flsurtido;
+            
+            cell = row.createCell(colNo++);
+            if (ordenesSurtido.fechapedido!=null) {
+                cell.setCellValue(ordenesSurtido.fechapedido);
+                cell.setCellStyle(datetimeStyle);
+            }
+            cell = row.createCell(colNo++);
+            if (ordenesSurtido.fechacancelacion!=null) {
+                cell.setCellValue(ordenesSurtido.fechacancelacion);
+                cell.setCellStyle(datetimeStyle);
+            }
+            cell = row.createCell(colNo++);
+            cell.setCellValue(ordenesSurtido.flsurtido);
+            cell = row.createCell(colNo++);
+            cell.setCellValue(ordenesSurtido.pedido);
+            cell = row.createCell(colNo++);
+            cell.setCellValue(ordenesSurtido.ruta);
+            cell = row.createCell(colNo++);
+            cell.setCellValue(ordenesSurtido.cliente);
+            cell = row.createCell(colNo++);
+            cell.setCellValue(ordenesSurtido.vendedor);
+            cell = row.createCell(colNo++);
+            cell.setCellValue(ordenesSurtido.surtidor);
+            cell = row.createCell(colNo++);
+            cell.setCellValue(ordenesSurtido.motivocancelacion);
+            rowNo++;
+            x++;
+        }
+
+        colNo = 0;
+        for(String header : headers) {
+            sheet.autoSizeColumn(colNo++);
+        }
+        
+        ////// Detalles Ordenes /////
+        //
+        //
+        XSSFSheet sheet1 = wb.createSheet("detalles");
+        sheet1.setSelected(true);
+
+        XSSFRow row1;
+        XSSFCell cell1;
+
+        row1 = sheet1.createRow(0);
+        headers = new String[] {
+             "Folio O.S", "Codigo", "Descripcion", "Cantidad Pedida"
+        };
+
+        colNo = 0;
+        for(String header : headers) {
+            cell1 = row1.createCell(colNo++);
+            cell1.setCellValue(header);
+            cell1.setCellStyle(headerStyle);
+
+            sheet1.setColumnWidth(0, (header.length()*1 * 450));
+        }
+        
+        rowNo = 1;
+        
+        // Obtener productos
+        ArrayList<DatabaseRecordEntity> arrayproductos = ds.collection(
+                "SELECT flsurtido, codigo, descripcion, cantidad "+
+                "FROM OrdenSurtidoPedidoDetalle " +
+                "WHERE flsurtido IN (" + folios + ") AND compania = '"+compania+"' "+
+                "ORDER BY flsurtido "); 
+        
+        for(DatabaseRecordEntity record : arrayproductos) {
+            row1 = sheet1.createRow(rowNo);
+            colNo = 0;
+            cell1 = row1.createCell(colNo++);
+            cell1.setCellValue(record.getInt("flsurtido"));
+            cell1 = row1.createCell(colNo++);
+            cell1.setCellValue(record.getString("codigo"));
+            cell1 = row1.createCell(colNo++);
+            cell1.setCellValue(record.getString("descripcion"));
+            cell1 = row1.createCell(colNo++);
+            cell1.setCellValue(record.getDouble("cantidad"));
+            cell1.setCellStyle(numeroStyle);
+
+            rowNo++;
+        }
+
+        colNo = 0;
+        for(String header : headers) {
+            sheet1.autoSizeColumn(colNo++);
+        }
+        //
+        //
+        //////
+
+        //
+        //
+        //
+
+        ServletOutputStream out = response.getOutputStream();
+        wb.write(out);
+        out.close();
+    }
 }
