@@ -168,6 +168,29 @@ function _catalogoClavesAlternas() {
     loadMainPage("/wms/view/catalogos/clavesalternas.html", onComplete);
 }
 
+function catalogoMotivoCancelacion() {
+    var state = {
+        func: "_catalogoMotivoCancelacion"
+    };
+    pushState(state);
+
+    _catalogoMotivoCancelacion();
+}
+
+function _catalogoMotivoCancelacion() {
+    if (!validaPermiso("catalogoMotivoCancelacion"))
+        return false;
+
+    function onComplete() {
+        function onCompleteII() {
+            initCatalogo();
+        };
+        loadScript("/wms/js/view/catalogos/motivoscancelacion.js", onCompleteII);
+    };
+
+    loadMainPage("/wms/view/catalogos/motivoscancelacion.html", onComplete);
+}
+
 function catalogoDirecciones(direccion) {
     var state = {
         func: "_catalogoDirecciones",
@@ -284,6 +307,29 @@ function _reporteOrdenesSurtido() {
     };
 
     loadMainPage("/wms/view/almacen/reportesurtido.html", onComplete);
+}
+
+function reporteOrdenesSurtidoCanceladas() {
+    var state = {
+        func: "_reporteOrdenesSurtidoCanceladas"
+    };
+    pushState(state);
+
+    _reporteOrdenesSurtidoCanceladas();
+}
+
+function _reporteOrdenesSurtidoCanceladas() {
+    if (!validaPermiso("reporteOrdenesSurtidoCanceladas"))
+        return false;
+
+    function onComplete() {
+        function onCompleteII() {
+            initReporte();
+        };
+        loadScript("/wms/js/view/almacen/reportesurtidocanceladas.js", onCompleteII);
+    };
+
+    loadMainPage("/wms/view/almacen/reportesurtidocanceladas.html", onComplete);
 }
 
 function certificacionSurtido() {
