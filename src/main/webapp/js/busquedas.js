@@ -131,6 +131,26 @@ function busquedaPerfiles(texto, onComplete, onError) {
     busquedas(parametros, onComplete, onError);
 }
 
+function busquedaMotivosCancelacion(texto, onComplete, onError) {
+    var parametros = {
+        registro: "mx.reder.wms.dao.entity.MotivoCancelacionDAO",
+        where: "(descripcion LIKE '%"+texto+"%' OR motivocancelacion LIKE '%"+texto+"%')",
+        order: "descripcion",
+        height: 370,
+        title: "Motivo Cancelacion",
+        datafields: [
+            {name: "motivocancelacion", type: "string"},
+            {name: "descripcion", type: "string"}
+        ],
+        columns: [
+            {text: "Motivo Cancelacion", datafield: "motivocancelacion", width: "30%"},
+            {text: "Nombre", datafield: "descripcion", width: "70%"}
+        ]
+    };
+
+    busquedas(parametros, onComplete, onError);
+}
+
 function busquedaUsuarios(texto, onComplete, onError) {
     var parametros = {
         registro: "mx.reder.wms.dao.entity.UsuarioDAO",
