@@ -250,4 +250,19 @@
             <query-column no="02" value-of="2"/>
         </query>
     </response>
+    <!--
+    - motivos cancelacion
+    -->
+    <response name="motivoscancelacion">
+        <param name="compania"/>
+        <param name="usuario"/>
+
+        <query sql="
+            SELECT motivocancelacion, descripcion 
+            FROM MotivoCancelacion "
+            column-separator="|">
+            <query-column no="01" value-of="1"/>
+            <query-column no="02" value-of="2"/>
+        </query>
+    </response>
 </responses>
