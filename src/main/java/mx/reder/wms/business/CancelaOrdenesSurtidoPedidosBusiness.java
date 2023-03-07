@@ -89,7 +89,7 @@ public class CancelaOrdenesSurtidoPedidosBusiness {
         }
     }
 
-    public void cancelaSurtido(String compania, String usuario, String flsurtido) throws Exception {
+    public void cancelaSurtido(String compania, String usuario, String flsurtido, String motivocancelacion) throws Exception {
         OrdenSurtidoPedidoDAO ordenSurtidoPedidoDAO = new OrdenSurtidoPedidoDAO();
         ordenSurtidoPedidoDAO.compania = compania;
         ordenSurtidoPedidoDAO.flsurtido = Numero.getIntFromString(flsurtido);
@@ -107,7 +107,7 @@ public class CancelaOrdenesSurtidoPedidosBusiness {
         ordenSurtidoPedidoDAO.fechastatus = new Date();
         ordenSurtidoPedidoDAO.usuario = usuario;
 
-        ds.update(ordenSurtidoPedidoDAO, new String[] {"status", "fechastatus", "usuario"});
+        ds.update(ordenSurtidoPedidoDAO, new String[] {"status", "fechastatus", "usuario", "fechacancelacion", "motivocancelacion"});
 
         OrdenSurtidoPedidoBitacoraDAO ordenSurtidoPedidoBitacoraDAO = new OrdenSurtidoPedidoBitacoraDAO();
         Reflector.copyAllFields(ordenSurtidoPedidoDAO, ordenSurtidoPedidoBitacoraDAO);
@@ -115,6 +115,8 @@ public class CancelaOrdenesSurtidoPedidosBusiness {
         ordenSurtidoPedidoBitacoraDAO.status = Constantes.ESTADO_CANCELADO;
         ordenSurtidoPedidoBitacoraDAO.fechabitacora = new Date();
         ordenSurtidoPedidoBitacoraDAO.usuario = usuario;
+        ordenSurtidoPedidoDAO.fechacancelacion = new Date();
+        ordenSurtidoPedidoDAO.motivocancelacion = motivocancelacion;
 
         ds.insert(ordenSurtidoPedidoBitacoraDAO);
 
