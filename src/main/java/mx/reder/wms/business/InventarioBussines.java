@@ -92,7 +92,17 @@ public class InventarioBussines {
             sql.append("AND a.CVE_ALM = '").append(almacen).append("' ");
         }
         if (!laboratorio.isEmpty()) {            
-            sql.append("AND l.CAMPLIB11 = '").append(laboratorio).append("' ");            
+            sql.append("AND l.CAMPLIB11 IN (");
+            String[] tokensl = laboratorio.split(",");
+            for(String token : tokensl) {
+                if(token.isEmpty())
+                    continue;
+                sql.append("'").append(token).append("',");
+            }
+            if (tokensl.length>0)
+                sql.deleteCharAt(sql.length() - 1);
+            
+            sql.append(") ");         
         }
         if (!productos.isEmpty()) {
             sql.append("AND p.CVE_ART IN (");
