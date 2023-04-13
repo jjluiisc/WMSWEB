@@ -139,7 +139,8 @@ function cargaProductosSeleccion() {
 
         var aceptar = function() {
             var almacen = $("#form-seleccion-productos [name=almacen]").val();
-            var laboratorio = $("#form-seleccion-productos [name=laboratorio]").val();
+            //var laboratorio = $("#form-seleccion-productos [name=laboratorio]").val();
+            var laboratorio = $("#form-seleccion-productos [name=lista-laboratorios]").val();
             var productos = $("#form-seleccion-productos [name=lista-productos]").val();
             cargar = {
                 almacen: almacen,
@@ -535,6 +536,7 @@ function finalizaInventarioValidado() {
 }
 
 function buscarProductos() {
+    var laboratorios = $("#form-seleccion-productos [name=lista-laboratorios]").val();
     var $input = $("#form-seleccion-productos [name=lista-productos]");
     var onAceptar = function() {
         $input.select();
@@ -552,5 +554,28 @@ function buscarProductos() {
     var onComplete = function(response) {
         $input.val(response.codigo+","+$input.val());
     };
-    busquedaProductos(usuario.compania, "", onComplete, onError);
+    
+    var arr = laboratorios.split(',');
+    laboratorios = "";
+    for(var x = 0; x < arr.length; x++) {
+        var lab = arr[x].trim();
+        if(lab === ''){continue;}
+        
+        if(x==0)
+            laboratorios = laboratorios + "'"+ lab +"'";
+        else
+            laboratorios = laboratorios + ", '" + lab + "'";
+    }
+    
+    var cve_alm = $("#form-seleccion-productos [name=almacen]").val();
+    
+    busquedaProductosLaboratorio(usuario.compania, "", laboratorios, cve_alm, onComplete, onError);
+}
+
+function agregarAlmacenes() {
+    var laboratorio = $("#form-seleccion-productos [name=laboratorio]").val();
+    if(laboratorio.length > 0 ){
+        var $input = $("#form-seleccion-productos [name=lista-laboratorios]");
+        $input.val($input.val()+laboratorio+",");
+    }
 }
