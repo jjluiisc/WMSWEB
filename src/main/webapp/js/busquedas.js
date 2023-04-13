@@ -66,6 +66,37 @@ function busquedaProductos(compania, texto, onComplete, onError) {
     busquedas(parametros, onComplete, onError);
 }
 
+function busquedaProductosLaboratorio(compania, texto, labiratorios, cve_alm, onComplete, onError) {
+    var parametros = {
+        ASPELcoleccion: "mx.reder.wms.collection.ASPELProductosLaboratorioCollection",
+        compania: compania,
+        where: "a.CVE_ALM = '"+cve_alm+"' AND i.DESCR LIKE '%"+texto+"%'"+(labiratorios.length === 0 ? "" : " AND l.CAMPLIB11 IN ("+labiratorios+")"),
+        order: "DESCR",
+        height: 370,
+        title: "Productos",
+        
+        datafields: [
+            {name: "compania", type: "string"},
+            {name: "codigo", type: "string"},
+            {name: "descripcion", type: "string"},
+            {name: "unidadmedida", type: "string"},
+            {name: "linea", type: "number"},
+            {name: "categoria", type: "number"},
+            {name: "marca", type: "string"},
+            {name: "existencia", type: "number"},
+            {name: "costo", type: "number"},
+            {name: "modificacion", type: "string"},
+            {name: "laboratorio", type: "string"}
+        ],
+        columns: [
+            {text: "Codigo", datafield: "codigo", width: "30%"},
+            {text: "Descripcion", datafield: "descripcion", width: "70%"}
+        ]
+    };
+
+    busquedas(parametros, onComplete, onError);
+}
+
 function busquedaClavesAlternas(compania, texto, onComplete, onError) {
     var parametros = {
         registro: "mx.reder.wms.dao.entity.ClaveAlternaDAO",
