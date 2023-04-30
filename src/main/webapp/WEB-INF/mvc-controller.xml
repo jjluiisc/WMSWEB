@@ -38,6 +38,11 @@
         <session-less>true</session-less>
         <content-type>application/json</content-type>
     </command>
+    <command id="OrdenSurtidoTicket" name="OrdenSurtidoTicket">
+        <class-name>mx.reder.wms.command.app.OrdenSurtidoTicketCommand</class-name>
+        <session-less>true</session-less>
+        <content-type>application/json</content-type>
+    </command>
 
     <command id="GeneraOrdenesSurtidoPedidos" name="Genera Ordenes de Surtido de Pedidos">
         <class-name>mx.reder.wms.command.GeneraOrdenesSurtidoPedidosCommand</class-name>
