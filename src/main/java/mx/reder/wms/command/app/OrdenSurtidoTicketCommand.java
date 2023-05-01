@@ -33,12 +33,12 @@ public class OrdenSurtidoTicketCommand implements WebCommandInterface {
             StringBuilder sql = new StringBuilder();
             sql.append("SELECT OSP.compania, (SELECT TOP 1 C.razonsocial FROM Compania C WHERE C.compania  = '"+compania+"') AS razonsocialcompania, ")
             .append("OSP.flsurtido, OSPC.contenedor, OSP.pedido, OSP.cliente, OSP.nombrecliente, OSP.ruta  FROM OrdenSurtidoPedido OSP ")
-            .append("INNER JOIN OrdenSurtidoPedidoCertifica OSPC ON OSP.compania = OSPC.compania AND OSP.flsurtido = OSPC.flsurtido ")
+            .append("LEFT OUTER JOIN OrdenSurtidoPedidoCertifica OSPC ON OSP.compania = OSPC.compania AND OSP.flsurtido = OSPC.flsurtido ")
             .append("WHERE 1 = 1 AND ").append("OSPC.compania = '"+compania+"' AND OSPC.flsurtido = "+flsurtido).append(" ")
             .append("UNION ")
             .append("SELECT OSP.compania, (SELECT TOP 1 C.razonsocial FROM Compania C WHERE C.compania  = '"+compania+"') AS razonsocialcompania, ")
             .append("OSP.flsurtido, OSPC.contenedor, OSP.pedido, OSP.cliente, OSP.nombrecliente, OSP.ruta  FROM OrdenSurtidoPedido OSP  ")
-            .append("INNER JOIN OrdenSurtidoPedidoContenedor OSPC ON OSP.compania = OSPC.compania AND OSP.flsurtido = OSPC.flsurtido ")
+            .append("LEFT OUTER JOIN OrdenSurtidoPedidoContenedor OSPC ON OSP.compania = OSPC.compania AND OSP.flsurtido = OSPC.flsurtido ")
             .append("WHERE 1 = 1 AND ").append("OSPC.compania = '"+compania+"' AND OSPC.flsurtido = "+flsurtido).append(" "); 
             
             OrdenSurtidoTicketTO ordenSurtidoTicketTO = new OrdenSurtidoTicketTO();
